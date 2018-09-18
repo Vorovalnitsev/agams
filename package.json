@@ -1,0 +1,27 @@
+{
+  "name": "agams",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vorovalnitsev/agams.git"
+  },
+  "author": "Vladimir Vorovalnitsev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vorovalnitsev/agams/issues"
+  },
+  "homepage": "https://github.com/Vorovalnitsev/agams#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.16.0",
+    "serve-favicon": "^2.5.0"
+  }
+}
