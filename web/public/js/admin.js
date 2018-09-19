@@ -3,9 +3,11 @@ let startFrom = 0;
 let quantity = 10;
 
 function getRecords (){
-    if(document.location.pathname.indexOf('ages') >= 0 ||
-        document.location.pathname.indexOf('products') >= 0 ||
-        document.location.pathname.indexOf('categories') >= 0){
+    if(document.location.pathname == '/ages' ||
+        document.location.pathname == '/products' ||
+        document.location.pathname == '/categories' ||
+        document.location.pathname == '/products-categories'
+    ){
         inProgress = true;
         let path = document.location.pathname + '/' +  startFrom + '/' + quantity;
 
@@ -16,21 +18,21 @@ function getRecords (){
                 if (records){
                     startFrom = startFrom + records.length;
                     records.forEach(function (item , i , arr ){
-                        if (document.location.pathname.indexOf('ages') >= 0){
+                        if (document.location.pathname == '/ages'){
                             $("#ages").append('<tr class="age" id="' + item.id + '">' +
                                 '<td>' + item.id + '</td>' +
                                 '<td class="name">' + item.name + '</td>' +
                                 '</tr>');
                         }
 
-                        if (document.location.pathname.indexOf('categories') >= 0){
+                        if (document.location.pathname == '/categories'){
                             $("#categories").append('<tr class="category" id="' + item.id + '">' +
                                 '<td>' + item.id + '</td>' +
                                 '<td class="name">' + item.name + '</td>' +
                                 '</tr>');
                         }
 
-                        if (document.location.pathname.indexOf('products') >= 0){
+                        if (document.location.pathname == '/products'){
                             $("#products").append('<tr class="product" id="' + item.id + '">' +
                                 '<td>' + item.id + '</td>' +
                                 '<td class="name">' + item.name + '</td>' +
@@ -38,6 +40,15 @@ function getRecords (){
                                 '<td class="nameAge">' + item.nameAge + '</td>' +
                                 '<td class="price">' + item.price + '</td>' +
                                 '<td class="weight">' + item.weight + '</td>' +
+                                '</tr>');
+                        }
+
+                        if (document.location.pathname == '/products-categories'){
+                            $("#productsCategories").append('<tr class="product" id="' + item.id + '">' +
+                                '<td>' + item.id + '</td>' +
+                                '<td class="name">' + item.name + '</td>' +
+                                '<td class="vendorCode">' + item.vendorCode + '</td>' +
+                                '<td class="productCategories"></td>' +
                                 '</tr>');
                         }
 
@@ -51,6 +62,17 @@ function getRecords (){
             },
             'json');
     }
+
+}
+
+function appendCategories(data){
+
+        $('#editProductCategoriesModal').find('#productCategories').append(
+            '<tr id = "' + data.id + '">' +
+            '<td>' + data.id + '</td>' +
+            '<td>' + data.name +
+            '</td>' +
+            '</tr>');
 
 }
 
@@ -257,4 +279,74 @@ $(document).ready(function () {
                 }
             });
     });
+
+    $('#productsCategories').on('click', 'tr', function () {
+        let idProduct = $(this).attr('id');
+        if (idProduct)
+            $.get('/products/' + idProduct,
+                function(data) {
+                    $('#editProductCategoriesModal').find('#editProductCategoriesLabel').text('Редактирование ID - ' +
+                        data.id +
+                    ' ' + data.name);
+                    $('#editProductCategoriesModal').find('#nameProduct').text(data.name);
+                    $('#editProductCategoriesModal').find('#idProduct').val(data.id);
+                    $('#editProductCategoriesModal').find('#vendorCode').text(data.vendorCode);
+
+                    $.get('/products-categories/' + idProduct, function(data) {
+                        $('#editProductCategoriesModal').find('#productCategories>tr').remove();
+                        data.forEach(function (item, i, arr) {
+                            appendCategories(item);
+                        });
+                    });
+                    $.get('/products-categories/' + idProduct + '/available', function(data) {
+                        $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                        data.forEach(function (item, i, arr) {
+                            $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                                item.name + '</option>');
+                        });
+                    });
+                    $('#editProductCategoriesModal').modal('show');
+                });
+    });
+
+    $('#addCategory').click(function () {
+        let idProduct = $('#editProductCategoriesModal').find('#idProduct').val();
+        if ($('#editProductCategoriesModal').find('#categoriesList').val()){
+            let productCategory = {
+                idProduct: idProduct,
+                idCategory: $('#editProductCategoriesModal').find('#categoriesList').val()
+            };
+            $.post('/products-categories/' + idProduct + '/add' , productCategory,
+                function (data) {
+                    if (data){
+                        appendCategories(data);
+                        $.get('/products-categories/' + idProduct + '/available', function(data) {
+                            $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                            data.forEach(function (item, i, arr) {
+                                $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                                    item.name + '</option>');
+                            });
+                        });
+                    }
+                });
+        }
+    });
+
+    $('#productCategories').on('click', 'tr', function () {
+        let idCategory = $(this).attr('id');
+        let idProduct = $('#editProductCategoriesModal').find('#idProduct').val();
+        $.get('/products-categories/' + idProduct + '/' + idCategory +'/remove', function(data) {
+            if (data){
+                $('#editProductCategoriesModal').find('#' +data.idCategory).remove();
+                $.get('/products-categories/' + idProduct + '/available', function(data) {
+                    $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                    data.forEach(function (item, i, arr) {
+                        $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                            item.name + '</option>');
+                    });
+                });
+            }
+        });
+    });
+
 })

@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const ages = require('./ages.js');
 const categories = require('./categories.js');
 const products = require('./products.js');
+const productsCategories = require('./products-categories.js');
 
 const config = require('../../../config');
 
@@ -39,6 +40,7 @@ mySqlConnection.connect(function(err) {
 ages.setConnection(mySqlConnection);
 categories.setConnection(mySqlConnection);
 products.setConnection(mySqlConnection);
+productsCategories.setConnection(mySqlConnection);
 
 //Возвращаем модель  ages
 module.exports.ages = ages;
@@ -46,3 +48,5 @@ module.exports.ages = ages;
 module.exports.categories = categories;
 //Возвращаем модель  products
 module.exports.products = products;
+//Возвращаем модель  productsCategories
+module.exports.productsCategories = productsCategories;

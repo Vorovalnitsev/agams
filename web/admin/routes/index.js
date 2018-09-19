@@ -6,7 +6,7 @@ const controllerIndex = require('../controllers');
 const controllerAges = require('../controllers/ages.js');
 const controllerCategories = require('../controllers/categories.js');
 const controllerProducts = require('../controllers/products.js');
-
+const controllerProductsCategories = require('../controllers/products-categories.js');
 
 
 
@@ -52,7 +52,7 @@ module.exports = function (web) {
     web.get('/products', controllerProducts.index);
 
     //AJAX
-    //Отдаем справочник возрастов. Указанное количество записей с указанной позиции.
+    //Отдаем справочник продуктов. Указанное количество записей с указанной позиции.
     web.get('/products/:from/:quantity', controllerProducts.getRecordsFromQuantity);
     //Отдаем указанный возраст по ID
     web.get('/products/:id', controllerProducts.getRecordById);
@@ -61,6 +61,21 @@ module.exports = function (web) {
     //Редактируем  возраст
     web.post('/products/update/:id', controllerProducts.updateRecord);
 
+    //ПРОДУКТЫ-КАТЕГОРИИ
+    //СТАТИКА
+    //Центральная страница
+    web.get('/products-categories', controllerProductsCategories.index);
+    //AJAX
+    //Отдаем продукт-категории по ID продукта
+    web.get('/products-categories/:id', controllerProductsCategories.getCategoriesByProductId);
+    //Отдаем доступные категории для продукта по ID. Доступные категории, которые еще не были добавлены в продукт.
+    web.get('/products-categories/:id/available', controllerProductsCategories.getAvailableCategoriesByProductId);
+    //Добавляем категорию в продукт
+    web.post('/products-categories/:id/add', controllerProductsCategories.addRecord);
+    //Удаляем категорию из продукта
+    web.get('/products-categories/:idProduct/:idCategory/remove', controllerProductsCategories.removeRecord);
+    //Отдаем справочник продуктов. Указанное количество записей с указанной позиции.
+    web.get('/products-categories/:from/:quantity', controllerProducts.getRecordsFromQuantity);
 
 /*
 
