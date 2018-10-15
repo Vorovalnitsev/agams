@@ -3,7 +3,7 @@ const model = require ('../models').ages;
 
 //Центральная страница
 module.exports.index = function index(req, res) {
-    res.render('ages.handlebars');
+    res.render('records.handlebars');
 }
 
 

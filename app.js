@@ -12,4 +12,4 @@ switch (process.env.NODE_ENV){
 
 //Запускаем сервисы
 const admin = require('./web/admin');
-// const  shop = require('./web/shop');
+const  shop = require('./web/shop');

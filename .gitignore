@@ -1,1 +1,14 @@
 # Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+.idea/agams.iml
+.idea/inspectionProfiles/
+.idea/jsLibraryMappings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+node_modules/
+web/.DS_Store
+web/public/.DS_Store
+web/public/img/.DS_Store
+web/public/img/

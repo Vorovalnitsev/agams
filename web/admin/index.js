@@ -4,17 +4,52 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const routesIndex = require('./routes');
 const config = require('../../config');
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const expressMySQLSession = require('express-mysql-session');
+const user = require('./controllers/users');
+
+//настройка passport
+passport.use(new localStrategy({
+        usernameField: 'username',
+        passwordField: 'password'
+    },
+    function(username, password, done) {
+        user.login(username, password, function (err, user) {
+            if (err)
+                {
+                    return done(err);
+                }
+            return done(null, user);
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    user.getUserById(id, function(err, user) {
+        done(err, user);
+    });
+});
 
 //настройка express
-let webServerParameter;
+let webServerParameters;
+let mySQLServerParameters;
 
 //проверяем переменные окружения
 switch (process.env.NODE_ENV){
     case 'production':
-        webServerParameter = config.getWebServerAdminParameterProduction();
+        webServerParameters = config.getWebServerAdminParameterProduction();
+        mySQLServerParameters = config.getMySqlConnectionStringProduction();
+
         break;
     default:
-        webServerParameter = config.getWebServerAdminParameterTest();
+        webServerParameters = config.getWebServerAdminParameterTest();
+        mySQLServerParameters = config.getMySqlConnectionStringTest();
         break;
 }
 
@@ -30,6 +65,21 @@ web.engine('handlebars', expressHandlebars({
     layoutsDir: __dirname + '/views/layouts'
 }));
 web.set('view engine', 'handlebars');
+web.use(session({
+    secret: 'All love games!',
+    name: 'sessionid',
+    resave: false,
+    saveUninitialized: false,
+    store: new expressMySQLSession(mySQLServerParameters)
+}));
+
+
+//Passport
+web.use(passport.initialize());
+web.use(passport.session());
+
+
+
 //статические пути
 web.use(express.static(__dirname  +  '/../public'));
 
@@ -43,9 +93,9 @@ web.use(function (req, res, next){
 
 routesIndex(web);
 
-web.listen(webServerParameter, function () {
+web.listen(webServerParameters, function () {
     let date = new Date();
     console.log(date + ' Admin Web server is started on ' +
-        'http://' + webServerParameter.hostname +':' + webServerParameter.port +
+        'http://' + webServerParameters.hostname +':' + webServerParameters.port +
         ' Press Ctrl + C for stop.');
 });

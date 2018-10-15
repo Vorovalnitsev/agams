@@ -3,11 +3,11 @@
 </div>
 <div class="col-md">
     <div class="row">
-        <div id="carouselPhotosControls" class="carousel slide col-sm-4" data-ride="carousel">
+        <div id="carouselPhotosControls" class="carousel slide col-sm-5" data-ride="carousel">
             <div class="carousel-inner">
-                {{#each toy.photos}}
-                    <div class="carousel-item {{#if active}}active{{/if}}">
-                        <img class="d-block w-100 rounded" src="/img/toys/{{../toy._id}}/{{this.fileName}}" alt="...">
+                {{#each photos}}
+                    <div class="carousel-item {{#if defaultPhoto}}active{{/if}}">
+                        <img class="d-block w-100 rounded" src="/img{{../toy._id}}/{{this.path}}" alt="...">
                         <div class="carousel-caption d-none d-md-block">
                             <h3></h3>
                             <p></p>
@@ -15,7 +15,6 @@
                     </div>
                 {{/each}}
             </div>
-
             <a class="carousel-control-prev" href="#carouselPhotosControls" role="button" data-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="sr-only">Previous</span>
@@ -25,13 +24,13 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-        <div class="text-left col-sm-8 ">
+        <div class="text-left col-sm-6 ">
             <h6>Возраст</h6>
-            <p>{{toy.age}}</p>
+            <p>{{toy.nameAge}}</p>
             <h6>Описание</h6>
             <p>{{toy.description}}</p>
             <h6>Размер упаковки</h6>
-            <p>{{toy.size.length}}x{{toy.size.width}}x{{toy.size.height}} см.
+            <p>{{toy.length}}x{{toy.width}}x{{toy.height}} мм.
             </p>
             <h6>Вес</h6>
             <p>{{toy.weight}} гр.
@@ -41,7 +40,6 @@
                 <img src="/icons/cart.svg" class="cart-img" id ="{{toy._id}}" action = "productIncrease1">
                 <span id="spanToyQuantity{{toy._id}}">{{#if toy.quantity}}x{{/if}}{{toy.quantity}}</span>
             </p>
-
         </div>
     </div>
 </div>

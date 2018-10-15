@@ -3,7 +3,7 @@ const model = require ('../models').categories;
 
 //Центральная страница
 module.exports.index = function index(req, res) {
-    res.render('categories.handlebars');
+    res.render('records.handlebars');
 }
 
 

@@ -4,7 +4,8 @@ module.exports.getMySqlConnectionStringTest = function getMySqlConnectionStringT
         host: 'localhost',
         user: 'agams',
         password: 'agams17092018',
-        database: 'agams'
+        database: 'agams',
+        port: '3306'
     }
 }
 
@@ -13,7 +14,8 @@ module.exports.getMySqlConnectionStringProduction = function getMySqlConnectionS
         host: 'localhost',
         user: 'agams',
         password: 'agams17092018',
-        database: 'agams'
+        database: 'agams',
+        port: '3306'
     }
 }
 
@@ -48,5 +50,27 @@ module.exports.getWebServerShopParameterTest = function getWebServerShopParamete
     return {
         hostname: 'localhost',
         port: '8082'
+    }
+}
+
+//Настройки для папки с изображениями
+
+module.exports.getImgPathProduction = function getImgPathProduction() {
+    return '/home/node/current/agams/web/public/img/';
+}
+
+
+module.exports.getImgPathTest = function getImgPathTest() {
+    return '/Users/vladimirvorovalnitsev/Desktop/Projects/node.js/agams/web/public/img/';
+}
+
+//Настройки passport-local-authenticate
+module.exports.getParametersPassportLocalAuthenticate = function getParametersPassportLocalAuthenticate(){
+    return {
+        saltlen : 128,
+        encoding : 'hex',
+        iterations : 25000,
+        keylen : 1024,
+        digestAlgorithm : 'SHA512'
     }
 }

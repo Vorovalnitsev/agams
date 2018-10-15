@@ -2,82 +2,314 @@ let inProgress = false;
 let startFrom = 0;
 let quantity = 10;
 
-function getRecords (){
-    if(document.location.pathname == '/ages' ||
-        document.location.pathname == '/products' ||
-        document.location.pathname == '/categories' ||
-        document.location.pathname == '/products-categories'
-    ){
-        inProgress = true;
-        let path = document.location.pathname + '/' +  startFrom + '/' + quantity;
-
-        $.get(path,
-            function(data) {
-                inProgress = false;
-                let records = data;
-                if (records){
-                    startFrom = startFrom + records.length;
-                    records.forEach(function (item , i , arr ){
-                        if (document.location.pathname == '/ages'){
-                            $("#ages").append('<tr class="age" id="' + item.id + '">' +
-                                '<td>' + item.id + '</td>' +
-                                '<td class="name">' + item.name + '</td>' +
-                                '</tr>');
-                        }
-
-                        if (document.location.pathname == '/categories'){
-                            $("#categories").append('<tr class="category" id="' + item.id + '">' +
-                                '<td>' + item.id + '</td>' +
-                                '<td class="name">' + item.name + '</td>' +
-                                '</tr>');
-                        }
-
-                        if (document.location.pathname == '/products'){
-                            $("#products").append('<tr class="product" id="' + item.id + '">' +
-                                '<td>' + item.id + '</td>' +
-                                '<td class="name">' + item.name + '</td>' +
-                                '<td class="vendorCode">' + item.vendorCode + '</td>' +
-                                '<td class="nameAge">' + item.nameAge + '</td>' +
-                                '<td class="price">' + item.price + '</td>' +
-                                '<td class="weight">' + item.weight + '</td>' +
-                                '</tr>');
-                        }
-
-                        if (document.location.pathname == '/products-categories'){
-                            $("#productsCategories").append('<tr class="product" id="' + item.id + '">' +
-                                '<td>' + item.id + '</td>' +
-                                '<td class="name">' + item.name + '</td>' +
-                                '<td class="vendorCode">' + item.vendorCode + '</td>' +
-                                '<td class="productCategories"></td>' +
-                                '</tr>');
-                        }
-
-                    });
-
-                };
-                if ($(window).height() >= $(document).height() && records.length!=0){
-                    getRecords();
-                }
-
-            },
-            'json');
-    }
+const parametersRecords = {
+    "/ages": {
+        title: "Справочник возрастов",
+        addButton: "Добавить возраст",
+        recordsTableTableHead: ["id", "Название"],
+        recordsTableFieldName: ["id", "name"],
+        modalName: "editAgeModal",
+        path: "/ages"
+    },
+    "/products": {
+        title: "Справочник продуктов",
+        addButton: "Добавить продукт",
+        recordsTableTableHead: ["id", "Название", "Артикул", "Возраст", "Цена", "Вес" ],
+        recordsTableFieldName: ["id", "name", "vendorCode", "nameAge", "price", "weight"],
+        modalName: "editProductModal",
+        path: "/products"
+    },
+    "/categories": {
+        title: "Справочник категорий",
+        addButton: "Добавить категорию",
+        recordsTableTableHead: ["id", "Название"],
+        recordsTableFieldName: ["id", "name"],
+        modalName: "editCategoriesModal",
+        path: "/categories"
+    },
+    "/users": {
+        title: "Справочник пользователей",
+        addButton: "Добавить пользователя",
+        recordsTableTableHead: ["id", "ФИО", "Логин", "E-mail"],
+        recordsTableFieldName: ["id", "fullName", "userName", "email"],
+        modalName: "editAgeModal",
+        path: "/users"
+    },
 
 }
 
-function appendCategories(data){
+let nameOfModalToOpen;
+
+$('.modal').on('hidden.bs.modal', function (e) {
+    if (nameOfModalToOpen == 'editProductModal') {
+        nameOfModalToOpen = '';
+        showProduct($('#idRecord').val());
+    }
+
+    if (nameOfModalToOpen == 'editProductCategoriesModal') {
+        nameOfModalToOpen = '';
+        showProductCategories($('#idRecord').val());
+    }
+
+    if (nameOfModalToOpen == 'editProductPhotosModal') {
+        nameOfModalToOpen = '';
+        showProductPhotos($('#idRecord').val());
+    }
+
+    if (nameOfModalToOpen == 'editUserPasswordModal') {
+        nameOfModalToOpen = '';
+        showUserPassword($('#idRecord').val());
+    }
+})
+
+function initPage() {
+    let currentPath = document.location.pathname;
+    let records = parametersRecords[currentPath];
+    if(records){
+        $("#recordsTitle").text(records.title);
+        $("#addRecordButton").text(records.addButton);
+        records.recordsTableTableHead.forEach(function (item , i , arr ){
+            $("#recordsTableHead").append('<th>' + item + '</th>');
+        });
+    }
+}
+function getRecords (){
+    let currentPath = document.location.pathname;
+    let records = parametersRecords[currentPath];
+    if(records){
+        inProgress = true;
+        let path = records.path + '/' +  startFrom + '/' + quantity;
+        $.get(path,
+            function(data) {
+                inProgress = false;
+                if (data){
+                    startFrom = startFrom + data.length;
+                    data.forEach(function (item , i , arr ){
+                        {
+                            $("#recordsTable").append('<tr id="' + item.id + '"></tr>');
+                            records.recordsTableFieldName.forEach(function (field , i , arr ){
+                                $("#" + item.id).append('<td class="' + field + '">' + item[field] + '</td>');
+                            })
+                        }
+                    });
+
+                };
+                if ($(window).height() >= $(document).height() && data.length!=0){
+                    getRecords();
+                }
+            },
+            'json');
+    }
+}
+
+function appendCategoryToProductCategoriesModal(data){
 
         $('#editProductCategoriesModal').find('#productCategories').append(
             '<tr id = "' + data.id + '">' +
             '<td>' + data.id + '</td>' +
             '<td>' + data.name +
             '</td>' +
+            '<td> <button class="btn btn-danger btn-sm removeCategoryFromProduct">удалить</button>' +
+            '</td>' +
             '</tr>');
 
 }
+function appendPhotoToProductPhotosModal(data){
+
+    $('#editProductPhotosModal').find('#productPhotos').append(
+        '<tr id = "' + data.id + '">' +
+        '<td>' + data.id + '</td>' +
+        '<td> <img src="/img' + data.path + '" class="col-sm-4">' +
+        '</td>' +
+        '<td> <button class="btn btn-danger btn-sm removePhotoFromProduct">удалить</button>' +
+        '<td><button class="btn btn-primary btn-sm defaultPhotoFromProduct">по-умолчанию</button></td>' +
+        '</td>' +
+        '</tr>');
+    if (data.defaultPhoto == 1)
+        $('#editProductPhotosModal').find('#' + data.id).addClass('table-success');
+}
+
+function showProduct(id) {
+    $.get('/ages/all', function(data) {
+        $('#editProductModal').find('#agesList>option').remove();
+        data.forEach(function (item, i, arr) {
+            $('#editProductModal').find('#agesList').append('<option value = "' + item.id + '">' +
+                item.name + '</option>');
+        });
+    });
+    if (id)
+        $.get('/products/' + id,
+            function(data) {
+                $('#editProductModal').find('#editProductModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editProductModal').find('#nameProduct').val(data.name);
+                $('#idRecord').val(data.id);
+                $('#editProductModal').find('#vendorCode').val(data.vendorCode);
+                $('#editProductModal').find('#description').val(data.description);
+                $('#editProductModal').find('#price').val(data.price);
+                $('#editProductModal').find('#weight').val(data.weight);
+                $('#editProductModal').find('#length').val(data.length);
+                $('#editProductModal').find('#width').val(data.width);
+                $('#editProductModal').find('#height').val(data.height);
+                $('#editProductModal').find('#visible').prop('checked', data.visible);
+                $('#editProductModal').find('#hit').prop('checked', data.hit);
+                $('#editProductModal').find('#agesList').val(data.idAge);
+                $('#editProductModal').modal('show');
+                });
+    else{
+        $('#editProductModal').find('#editProductModalLabel').text('Новый продукт');
+        $('#editProductModal').find('#nameProduct').val('');
+        $('#idRecord').val('');
+        $('#editProductModal').find('#vendorCode').val('');
+        $('#editProductModal').find('#description').val('');
+        $('#editProductModal').find('#price').val('');
+        $('#editProductModal').find('#weight').val('');
+        $('#editProductModal').find('#length').val('');
+        $('#editProductModal').find('#width').val('');
+        $('#editProductModal').find('#height').val('');
+        $('#editProductModal').find('#visible').prop('checked', false);
+        $('#editProductModal').find('#hit').prop('checked', false);
+        $('#editProductModal').modal('show');
+    }
+
+}
+function showProductCategories(id) {
+    if (id)
+        $.get('/products/' + id,
+            function(data) {
+                $('#editProductCategoriesModal').find('#editProductCategoriesLabel').text('Редактирование ID - ' +
+                    data.id);
+                $('#editProductCategoriesModal').find('#nameProduct').text(data.name);
+                $('#editProductCategoriesModal').find('#vendorCode').text(data.vendorCode);
+
+                $.get('/products-categories/' + id, function(data) {
+                    $('#editProductCategoriesModal').find('#productCategories>tr').remove();
+                    data.forEach(function (item, i, arr) {
+                        appendCategoryToProductCategoriesModal(item);
+                    });
+                });
+                $.get('/products-categories/' + id + '/available', function(data) {
+                    $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                    data.forEach(function (item, i, arr) {
+                        $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                            item.name + '</option>');
+                    });
+                });
+                $('#editProductCategoriesModal').modal('show');
+            });
+}
+function showProductPhotos(id) {
+    if (id)
+        $.get('/products/' + id,
+            function(data) {
+                $('#editProductPhotosModal').find('#editProductPhotosModal').text('Редактирование ID - ' +
+                    data.id);
+                $('#editProductPhotosModal').find('#nameProduct').text(data.name);
+                $('#editProductPhotosModal').find('#vendorCode').text(data.vendorCode);
+
+                $.get('/products-photos/' + id, function(data) {
+                    $('#editProductPhotosModal').find('#productPhotos>tr').remove();
+                    data.forEach(function (item, i, arr) {
+                        appendPhotoToProductPhotosModal(item);
+                    });
+                });
+                $('#editProductPhotosModal').modal('show');
+            });
+}
+
+function showAge(id){
+    if(id)
+        $.get('/ages/' + id,
+            function(data) {
+                $('#editAgeModal').find('#editAgeModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editAgeModal').find('#nameAge').val(data.name);
+                $('#idRecord').val(data.id);
+                $('#editAgeModal').modal('show');
+            });
+    else{
+        $('#editAgeModal').find('#editAgeModalLabel').text('Новый возраст');
+        $('#editAgeModal').find('#nameAge').val('');
+        $('#idRecord').val('');
+        $('#editAgeModal').modal('show');
+    }
+
+}
+
+function showCategory(id){
+    if(id)
+        $.get('/categories/' + id,
+            function(data) {
+                $('#editCategoryModal').find('#editCategoryModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editCategoryModal').find('#nameCategory').val(data.name);
+                $('#idRecord').val(data.id);
+                $('#editCategoryModal').modal('show');
+            });
+    else{
+        $('#editCategoryModal').find('#editCategoryModalLabel').text('Новая категория');
+        $('#editCategoryModal').find('#nameCategory').val('');
+        $('#idRecord').val('');
+        $('#editCategoryModal').modal('show');
+    }
+
+}
+
+function showUser(id){
+    if(id)
+        $.get('/users/' + id,
+            function(data) {
+                $('#editUserModal').find('#editUserModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editUserModal').find('#fullName').val(data.fullName);
+                $('#editUserModal').find('#userName').val(data.userName);
+                $('#editUserModal').find('#email').val(data.email);
+                $('#idRecord').val(data.id);
+                $('#editUserModal').modal('show');
+            });
+    else{
+        $('#editUserModal').find('#editUserModalLabel').text('Новый пользователь');
+        $('#editUserModal').find('#fullName').val('');
+        $('#editUserModal').find('#userName').val('');
+        $('#editUserModal').find('#email').val('');
+        $('#idRecord').val('');
+        $('#editUserModal').modal('show');
+    }
+
+}
+function showUserPassword(id){
+    if(id)
+        $.get('/users/' + id,
+            function(data) {
+                $('#editUserPasswordModal').find('#editUserPasswordModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editUserPasswordModal').find('#fullName').text(data.fullName);
+                $('#editUserPasswordModal').find('#userName').text(data.userName);
+                $('#idRecord').val(data.id);
+                $('#editUserPasswordModal').modal('show');
+            });
+}
+
+
+function saveRecord(url, data){
+    let parameters = parametersRecords[url]
+    if (data.id)
+        $.post(parameters.path + '/update/' + data.id, data)
+            .done(function (result) {
+                if (result){
+                    $('.modal').modal('hide');
+                    parameters.recordsTableFieldName.forEach(function (item, i, arr){
+                        $("#" + result.id + ">." + item).text(result[item]);
+                    })
+                }
+            })
+            .fail(function () {
+                alert('Ошибка сохранения данных');
+            });
+    else
+        $.post(parameters.path + '/add', data, function (result) {
+            if (result)
+                location.href = parameters.path;
+        });
+}
 
 $(document).ready(function () {
-
+    initPage();
     getRecords();
     $(window).scroll(function () {
         if($(window).scrollTop() + $(window).height() >= $(document).height() - 200
@@ -95,222 +327,102 @@ $(document).ready(function () {
         }
     });
 
-    $('#showAddAge').click(function () {
-        $('#editAgeModal').find('#editAgeModalLabel').text('Новый возраст');
-        $('#editAgeModal').find('#nameAge').val('');
-        $('#editAgeModal').find('#idAge').val('');
-        $('#editAgeModal').modal('show');
+    $('#addRecordButton').on('click', function () {
+        let url = document.location.pathname;
+        if (url =='/products')
+            showProduct();
+        if (url =='/ages')
+            showAge();
+        if (url =='/categories')
+            showCategory();
+        if (url =='/users')
+            showUser();
     });
 
-    $('#ages').on('click', 'tr', function () {
-        let id = $(this).attr('id');
-        if (id)
-            $.get('/ages/' + id,
-                function(data) {
-                    $('#editAgeModal').find('#editAgeModalLabel').text('Редактирование ID - ' + data.id);
-                    $('#editAgeModal').find('#nameAge').val(data.name);
-                    $('#editAgeModal').find('#idAge').val(data.id);
-                    $('#editAgeModal').modal('show');
-                });
+    $('#recordsTable').on('click', 'tr', function () {
+        let url = document.location.pathname;
+        if (url =='/products'){
+            showProduct($(this).attr('id'));
+        }
+        if (url =='/ages'){
+            showAge($(this).attr('id'));
+        }
+
+        if (url =='/categories'){
+            showCategory($(this).attr('id'));
+        }
+
+        if (url =='/users'){
+            showUser($(this).attr('id'));
+        }
+
     });
+    $('.saveRecord').click(function () {
+        let url = document.location.pathname;
 
+        if (url == '/products'){
+            let visible = 0;
+            let hit = 0;
 
-    $('#saveAge').click(function () {
-       if ($('#editAgeModal').find('#idAge').val())
-           $.post('/ages/update/' + $('#editAgeModal').find('#idAge').val(),
-               {
-                   id: $('#editAgeModal').find('#idAge').val(),
-                   name: $('#editAgeModal').find('#nameAge').val()
-               }, function (data) {
-               if (data){
-                   $('#editAgeModal').modal('hide');
-                   $('#' + data.id + '>.name').text(data.name);
-               }
-           });
-           else
-               $.post('/ages/add', {name: $('#nameAge').val()}, function (data) {
-                   if (data){
-                       $('#editAgeModal').modal('hide');
-                       location.href = '/ages';
-                   }
-               });
-    });
+            if ($('#editProductModal').find('#visible').is(':checked'))
+                visible = 1;
+            if ($('#editProductModal').find('#hit').is(':checked'))
+                hit = 1;
+            let data = {
+                id: $('#idRecord').val(),
+                name: $('#editProductModal').find('#nameProduct').val(),
+                vendorCode: $('#editProductModal').find('#vendorCode').val(),
+                description: $('#editProductModal').find('#description').val(),
+                idAge: $('#editProductModal').find('#agesList').val(),
+                price: $('#editProductModal').find('#price').val(),
+                weight: $('#editProductModal').find('#weight').val(),
+                length: $('#editProductModal').find('#length').val(),
+                width: $('#editProductModal').find('#width').val(),
+                height: $('#editProductModal').find('#height').val(),
+                visible: visible,
+                hit: hit
+            }
+            saveRecord(url, data);
+        }
 
-
-    $('#showAddCategory').click(function () {
-        $('#editCategoryModal').find('#editCategoryModalLabel').text('Новая категория');
-        $('#editCategoryModal').find('#nameCategory').val('');
-        $('#editCategoryModal').find('#idCategory').val('');
-        $('#editCategoryModal').modal('show');
-    });
-
-    $('#categories').on('click', 'tr', function () {
-        let id = $(this).attr('id');
-        if (id)
-            $.get('/categories/' + id,
-                function(data) {
-                    $('#editCategoryModal').find('#editCategoryModalLabel').text('Редактирование ID - ' + data.id);
-                    $('#editCategoryModal').find('#nameCategory').val(data.name);
-                    $('#editCategoryModal').find('#idCategory').val(data.id);
-                    $('#editCategoryModal').modal('show');
-                });
-    });
-
-
-    $('#saveCategory').click(function () {
-        if ($('#editCategoryModal').find('#idCategory').val())
-            $.post('/categories/update/' + $('#editCategoryModal').find('#idCategory').val(),
-                {
-                    id: $('#editCategoryModal').find('#idCategory').val(),
-                    name: $('#editCategoryModal').find('#nameCategory').val()
-                }, function (data) {
-                    if (data){
-                        $('#editCategoryModal').modal('hide');
-                        $('#' + data.id + '>.name').text(data.name);
-                    }
-                });
-        else
-            $.post('/ages/add', {name: $('#nameCategory').val()}, function (data) {
-                if (data){
-                    $('#editCategoryModal').modal('hide');
-                    location.href = '/categories';
-                }
+        if (url == '/ages')
+            saveRecord(url, {
+                id: $('#idRecord').val(),
+                name: $('#editAgeModal').find('#nameAge').val()
+            });
+        if (url == '/categories')
+            saveRecord(url, {
+                id: $('#idRecord').val(),
+                name: $('#editCategoryModal').find('#nameCategory').val()
+            });
+        if (url == '/users')
+            saveRecord(url, {
+                id: $('#idRecord').val(),
+                userName: $('#editUserModal').find('#userName').val(),
+                fullName: $('#editUserModal').find('#fullName').val(),
+                email: $('#editUserModal').find('#email').val()
             });
     });
 
-
-
-    $('#showAddProduct').click(function () {
-        $.get('/ages/all', function(data){
-            $('#editProductModal').find('#agesList>option').remove();
-            data.forEach(function (item , i , arr ){
-                $('#editProductModal').find('#agesList').append('<option value = "' + item.id + '">' +
-                    item.name + '</option>');
-            });
-
-            $('#editProductModal').find('#editProductModalLabel').text('Новый продукт');
-            $('#editProductModal').find('#nameProduct').val('');
-            $('#editProductModal').find('#idProduct').val('');
-            $('#editProductModal').find('#vendorCode').val('');
-            $('#editProductModal').find('#description').val('');
-            $('#editProductModal').find('#price').val('');
-            $('#editProductModal').find('#weight').val('');
-            $('#editProductModal').find('#length').val('');
-            $('#editProductModal').find('#width').val('');
-            $('#editProductModal').find('#height').val('');
-            $('#editProductModal').find('#visible').prop('checked', false);
-            $('#editProductModal').find('#hit').prop('checked', false);
-
-            $('#editProductModal').modal('show');
-        });
+    $('.productOpenButton').click( function () {
+        nameOfModalToOpen ='editProductModal';
+        $('.modal').modal('hide');
     });
-
-    $('#products').on('click', 'tr', function () {
-        let id = $(this).attr('id');
-        if (id)
-            $.get('/products/' + id,
-                function(data) {
-                    $('#editProductModal').find('#editProductModalLabel').text('Редактирование ID - ' + data.id);
-                    $('#editProductModal').find('#nameProduct').val(data.name);
-                    $('#editProductModal').find('#idProduct').val(data.id);
-                    $('#editProductModal').find('#vendorCode').val(data.vendorCode);
-                    $('#editProductModal').find('#description').val(data.description);
-                    $('#editProductModal').find('#price').val(data.price);
-                    $('#editProductModal').find('#weight').val(data.weight);
-                    $('#editProductModal').find('#length').val(data.length);
-                    $('#editProductModal').find('#width').val(data.width);
-                    $('#editProductModal').find('#height').val(data.height);
-                    $('#editProductModal').find('#visible').prop('checked', data.visible);
-                    $('#editProductModal').find('#hit').prop('checked', data.hit);
-                    let idAge = data.idAge;
-                    $.get('/ages/all', function(data) {
-                        $('#editProductModal').find('#agesList>option').remove();
-                        data.forEach(function (item, i, arr) {
-                            $('#editProductModal').find('#agesList').append('<option value = "' + item.id + '">' +
-                                item.name + '</option>');
-                        });
-                        $('#editProductModal').find('#agesList').val(idAge);
-                        $('#editProductModal').modal('show');
-                    });
-                });
+    $('.productPhotosOpenButton').click( function () {
+        if ($('#idRecord').val()) {
+            nameOfModalToOpen = 'editProductPhotosModal';
+            $('.modal').modal('hide');
+        }
     });
-
-
-    $('#saveProduct').click(function () {
-        let visible = 0;
-        let hit = 0;
-
-        if ($('#editProductModal').find('#visible').is(':checked'))
-            visible = 1;
-        if ($('#editProductModal').find('#hit').is(':checked'))
-            hit = 1;
-
-        let product = {
-            id: $('#editProductModal').find('#idProduct').val(),
-            name: $('#editProductModal').find('#nameProduct').val(),
-            vendorCode: $('#editProductModal').find('#vendorCode').val(),
-            description: $('#editProductModal').find('#description').val(),
-            idAge: $('#editProductModal').find('#agesList').val(),
-            price: $('#editProductModal').find('#price').val(),
-            weight: $('#editProductModal').find('#weight').val(),
-            length: $('#editProductModal').find('#length').val(),
-            width: $('#editProductModal').find('#width').val(),
-            height: $('#editProductModal').find('#height').val(),
-            visible: visible,
-            hit: hit
-        };
-        if ($('#editProductModal').find('#idProduct').val())
-            $.post('/products/update/' + $('#editProductModal').find('#idProduct').val(), product, function (data) {
-                    if (data){
-                        $('#editProductModal').modal('hide');
-                        $('#' + data.id + '>.name').text(data.name);
-                        $('#' + data.id + '>.vendorCode').text(data.vendorCode);
-                        $('#' + data.id + '>.nameAge').text(data.nameAge);
-                        $('#' + data.id + '>.price').text(data.price);
-                        $('#' + data.id + '>.weight').text(data.weight);
-
-                    }
-                });
-        else
-            $.post('/products/add', product, function (data) {
-                if (data){
-                    $('#editProductModal').modal('hide');
-                    location.href = '/products';
-                }
-            });
-    });
-
-    $('#productsCategories').on('click', 'tr', function () {
-        let idProduct = $(this).attr('id');
-        if (idProduct)
-            $.get('/products/' + idProduct,
-                function(data) {
-                    $('#editProductCategoriesModal').find('#editProductCategoriesLabel').text('Редактирование ID - ' +
-                        data.id +
-                    ' ' + data.name);
-                    $('#editProductCategoriesModal').find('#nameProduct').text(data.name);
-                    $('#editProductCategoriesModal').find('#idProduct').val(data.id);
-                    $('#editProductCategoriesModal').find('#vendorCode').text(data.vendorCode);
-
-                    $.get('/products-categories/' + idProduct, function(data) {
-                        $('#editProductCategoriesModal').find('#productCategories>tr').remove();
-                        data.forEach(function (item, i, arr) {
-                            appendCategories(item);
-                        });
-                    });
-                    $.get('/products-categories/' + idProduct + '/available', function(data) {
-                        $('#editProductCategoriesModal').find('#categoriesList>option').remove();
-                        data.forEach(function (item, i, arr) {
-                            $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
-                                item.name + '</option>');
-                        });
-                    });
-                    $('#editProductCategoriesModal').modal('show');
-                });
+    $('.productCategoriesOpenButton').click( function () {
+        if ($('#idRecord').val()){
+            nameOfModalToOpen ='editProductCategoriesModal';
+            $('.modal').modal('hide');
+        }
     });
 
     $('#addCategory').click(function () {
-        let idProduct = $('#editProductCategoriesModal').find('#idProduct').val();
+        let idProduct = $('#idRecord').val();
         if ($('#editProductCategoriesModal').find('#categoriesList').val()){
             let productCategory = {
                 idProduct: idProduct,
@@ -319,7 +431,7 @@ $(document).ready(function () {
             $.post('/products-categories/' + idProduct + '/add' , productCategory,
                 function (data) {
                     if (data){
-                        appendCategories(data);
+                        appendCategoryToProductCategoriesModal(data);
                         $.get('/products-categories/' + idProduct + '/available', function(data) {
                             $('#editProductCategoriesModal').find('#categoriesList>option').remove();
                             data.forEach(function (item, i, arr) {
@@ -331,10 +443,9 @@ $(document).ready(function () {
                 });
         }
     });
-
-    $('#productCategories').on('click', 'tr', function () {
-        let idCategory = $(this).attr('id');
-        let idProduct = $('#editProductCategoriesModal').find('#idProduct').val();
+    $('#productCategories').on('click', '.removeCategoryFromProduct', function () {
+        let idCategory = $(this).closest('tr').attr('id');
+        let idProduct = $('#idRecord').val();
         $.get('/products-categories/' + idProduct + '/' + idCategory +'/remove', function(data) {
             if (data){
                 $('#editProductCategoriesModal').find('#' +data.idCategory).remove();
@@ -349,4 +460,101 @@ $(document).ready(function () {
         });
     });
 
+    $('#addPhotoButton').click(function (event) {
+        $('#addPhotoButton').prop('disabled', true);
+        let idProduct = $('#idRecord').val();
+        let files = $('input[type=file]').prop('files');
+
+        event.stopPropagation();
+        event.preventDefault();
+
+        var data = new FormData();
+        $.each( files, function( key, value ){
+            data.append( key, value );
+        });
+
+        // Отправляем запрос
+
+        $.ajax({
+            url: '/products-photos/' + idProduct + '/add',
+            type: 'POST',
+            data: data,
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function( data, textStatus, jqXHR ){
+
+                // Если все ОК
+                $('#addPhotoButton').prop('disabled', false);
+                $('input[type=file]').prop('value', '');
+
+                if( typeof data.error === 'undefined' ){
+                    // Файлы успешно загружены, делаем что нибудь здесь
+
+                    // выведем пути к загруженным файлам в блок '.ajax-respond'
+                    appendPhotoToProductPhotosModal(data);
+                }
+                else{
+                    console.log('ОШИБКИ ОТВЕТА сервера: ' + data.error );
+                }
+            },
+            error: function( jqXHR, textStatus, errorThrown ){
+                console.log('ОШИБКИ AJAX запроса: ' + textStatus );
+                $('#addPhotoButton').prop('disabled', false);
+                $('input[type=file]').prop('value', '');
+            }
+        });
+    });
+    $('#productPhotos').on('click', '.removePhotoFromProduct', function () {
+        let idPhoto = $(this).closest('tr').attr('id');
+        let idProduct = $('#idProduct').val();
+        $.get('/products-photos/' + idProduct + '/' + idPhoto +'/remove', function(data) {
+            if (data){
+                    $('#editProductPhotosModal').find('#' + data.idPhoto).remove();
+                }
+        });
+    });
+    $('#productPhotos').on('click', '.defaultPhotoFromProduct', function () {
+        let idPhoto = $(this).closest('tr').attr('id');
+        let idProduct = $('#idRecord').val();
+        $.get('/products-photos/' + idProduct + '/' + idPhoto +'/default', function(data) {
+            if (data){
+                $('#editProductPhotosModal').find('.table-success').removeClass();
+                $('#editProductPhotosModal').find('#' + data.idPhoto).addClass('table-success');
+            }
+        });
+    });
+
+    $('.userPasswordChangeOpenButton').click( function () {
+        if ($('#idRecord').val()){
+            nameOfModalToOpen ='editUserPasswordModal';
+            $('.modal').modal('hide');
+        }
+    });
+
+    $('.savePassword').click( function () {
+        if ($('#idRecord').val()){
+            $.post('/users/' + $('#idRecord').val() + '/changepassword',
+                {
+                    id: $('#idRecord').val(),
+                    password: $('#editUserPasswordModal').find('#password').val(),
+                    repassword: $('#editUserPasswordModal').find('#repassword').val(),
+
+                })
+                .done(function (result) {
+                    if (result)
+                        if (result.err) {
+                            alert('Ошибка изменения пароля');
+                        }
+                        else
+                            $('.modal').modal('hide');
+                })
+                .fail(function () {
+                    alert('Ошибка сохранения данных');
+                });
+        }
+    });
+
 })
+

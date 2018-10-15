@@ -1,0 +1,17 @@
+<div class="row">
+{{#each toys}}
+    <div class="col">
+        <a href="/toys/{{id}}">
+            <div style="text-align: center">
+                <img src="/img{{path}}" style="height: 300px;">
+            </div>
+        </a>
+            <div style="text-align: center">
+                <p style="font-size: 18pt; font-weight: bold;">{{name}}</p>
+            </div>
+
+    </div>
+{{/each}}
+</div>
+
+

@@ -1,0 +1,307 @@
+<h1 id="recordsTitle"></h1>
+<button type="button" class="btn btn-primary" id="addRecordButton"></button>
+
+<table class="table" id="recordsTable">
+    <thead id="recordsTableHead">
+
+    </thead>
+</table>
+
+
+<form>
+    <input type="hidden" id="idRecord" value="">
+</form>
+
+<div class="modal fade" id="editAgeModal" tabindex="-1" role="dialog" aria-labelledby="editAgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAgeModalLabel">Новый возраст</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="age-name" class="col-form-label">Возраст:</label>
+                        <input type="text" class="form-control" id="nameAge">
+                        <input type="hidden" id="idAge" value="">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary saveRecord">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Новый продукт</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="product-name" class="col-form-label">Название:</label>
+                        <input type="text" class="form-control" id="nameProduct">
+                        <label for="product-vendorCode" class="col-form-label">Артикул:</label>
+                        <input type="text" class="form-control" id="vendorCode">
+                        <label for="product-description" class="col-form-label">Описание:</label>
+                        <textarea type="text" class="form-control" id="description" rows = "7"></textarea>
+
+                        <label for="product-age" class="col-form-label">Возраст:</label>
+                        <select class="form-control" id="agesList">
+                        </select>
+
+                        <label for="product-price" class="col-form-label">Цена, руб.:</label>
+                        <input type="text" class="form-control" id="price">
+                        <label for="product-weight" class="col-form-label">Вес, г.:</label>
+                        <input type="text" class="form-control" id="weight">
+                        <label for="product-length" class="col-form-label">Длина, мм.:</label>
+                        <input type="text" class="form-control" id="length">
+                        <label for="product-width" class="col-form-label">Ширина, мм.:</label>
+                        <input type="text" class="form-control" id="width">
+                        <label for="product-height" class="col-form-label">Высота, мм.:</label>
+                        <input type="text" class="form-control" id="height">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="visible">
+                            <label class="form-check-label" for="visible">Виден в каталоге</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="hit">
+                            <label class="form-check-label" for="hit">Хит</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary productCategoriesOpenButton">Категории</button>
+                <button type="button" class="btn btn-primary productPhotosOpenButton">Фотографии</button>
+                <button type="button" class="btn btn-primary saveRecord">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductCategoriesModal" tabindex="-1" role="dialog" aria-labelledby="editProductCategoriesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductCategoriesLabel">Продукт - Категории</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Название продукта:</h5>
+                <p id="nameProduct"></p>
+                <h5>Артикул:</h5>
+                <p id="vendorCode"></p>
+                <table class="table" id="productCategories">
+                    <thead>
+                    <th>
+                        id
+                    </th>
+                    <th>
+                        Категория
+                    </th>
+                    <th>
+
+                    </th>
+                    </thead>
+                </table>
+                <form>
+                    <div class="form-group">
+                        <label for="product-category" class="col-form-label">Категория:</label>
+                        <select class="form-control" id="categoriesList">
+                        </select>
+                        <button type="button" class="btn btn-primary" id="addCategory">Добавить</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary productOpenButton">Продукт</button>
+                <button type="button" class="btn btn-primary productPhotosOpenButton">Фотографии</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductPhotosModal" tabindex="-1" role="dialog" aria-labelledby="editProductPhotosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductCategoriesLabel">Продукт - Фотографии</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Название продукта:</h5>
+                <p id="nameProduct"></p>
+                <h5>Артикул:</h5>
+                <p id="vendorCode"></p>
+                <table class="table" id="productPhotos">
+                    <thead>
+                    <th>
+                        id
+                    </th>
+                    <th>
+                        Фото
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    </thead>
+                </table>
+                <form>
+                    <div class="form-group">
+                        <label for="product-photo" class="col-form-label">Путь к файлу:</label>
+                        <div class="custom-file">
+                            <input type="file" class="form-control-file" id="imageFile">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="addPhotoButton">Загрузить</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary productOpenButton">Продукт</button>
+                <button type="button" class="btn btn-primary productCategoriesOpenButton">Категории</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAgeModal" tabindex="-1" role="dialog" aria-labelledby="editAgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAgeModalLabel">Новый возраст</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="age-name" class="col-form-label">Возраст:</label>
+                        <input type="text" class="form-control" id="nameAge">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary saveRecord">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Новая категория</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="category-name" class="col-form-label">Категория:</label>
+                        <input type="text" class="form-control" id="nameCategory">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary saveRecord">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Новый пользователь</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="user-fullname" class="col-form-label">ФИО:</label>
+                        <input type="text" class="form-control" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-username" class="col-form-label">Логин:</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email" class="col-form-label">E-mail:</label>
+                        <input type="text" class="form-control" id="email" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary userPasswordChangeOpenButton">Сменить пароль</button>
+                <button type="button" class="btn btn-primary saveRecord">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserPasswordModal" tabindex="-1" role="dialog" aria-labelledby="editUserPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserPasswordModalLabel">Пароль пользователя</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>ФИО:</h5>
+                <p id="fullName"></p>
+                <h5>Логин:</h5>
+                <p id="userName"></p>
+                <form>
+
+                    <div class="form-group">
+                        <label for="user-password" class="col-form-label">Пароль:</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-repassword" class="col-form-label">Подтверждение пароля:</label>
+                        <input type="password" class="form-control" id="repassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary savePassword">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

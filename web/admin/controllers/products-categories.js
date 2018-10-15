@@ -1,12 +1,6 @@
 const model = require ('../models').productsCategories;
 const modelCategories = require ('../models').categories;
 
-
-//Центральная страница
-module.exports.index = function index(req, res) {
-    res.render('products-categories.handlebars');
-}
-
 //Отдаем продукт-категории по ID продукта
 module.exports.getCategoriesByProductId = function getCategoriesByProductId(req, res) {
     model.getCategoriesByProductId(req.params.id, function (result) {
