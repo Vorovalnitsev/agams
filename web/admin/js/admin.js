@@ -285,7 +285,6 @@ function showUserPassword(id){
             });
 }
 
-
 function saveRecord(url, data){
     let parameters = parametersRecords[url]
     if (data.id)

@@ -1,0 +1,114 @@
+
+{{#if toys}}
+    <table class="table" id="tableToys">
+        <tr>
+            <th >
+                Название
+            </th>
+            <th >
+                Цена
+            </th>
+            <th  colspan="3">
+                Количество
+            </th>
+            <th >
+                Стоимость
+            </th>
+        </tr>
+        {{#each toys}}
+            <tr id="{{toy.id}}">
+                <td ><a href="/toys/{{toy.id}}">{{toy.name}}</a></td>
+                <td >{{toy.price}} руб.</td>
+                <td>
+                    <button type="submit" class="btn btn-primary increaseToy" value="{{toy.id}}">+</button>
+                </td>
+                <td class="toyQuantity">{{quantity}}</td>
+                <td >
+                    <button type="submit" class="btn btn-primary reduceToy" value="{{toy.id}}">-</button>
+                </td>
+                <td class="toyValue">{{value}} руб.</td>
+            </tr>
+        {{/each}}
+        <tr>
+            <td colspan="5" class="products-td">
+                Итого
+            </td>
+            <td class="products-td" id="productsTotal">
+                {{total}} руб.
+            </td>
+        </tr>
+
+    </table>
+
+    <div class="col-sm" id="formCart">
+            <h5> Для подтверждения заказа просим Вас заполнить информацию для связи с Вами</h5>
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label for="lastName">Фамилия: </label>
+                <input type="text" class="form-control" id="lastName" name="lastName">
+                <div class="invalid-feedback">
+                    Пожалуйста введите Фамилию.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="firstName">Имя: </label>
+                <input type="text" class="form-control" id="firstName" name="firstName">
+                <div class="invalid-feedback">
+                    Пожалуйста введите Имя.
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com">
+                <div class="invalid-feedback">
+                    Пожалуйста введите адрес электронной почты.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="+7 123 456 78 90">
+                <div class="invalid-feedback">
+                    Пожалуйста введите телефон для связи.
+                </div>
+            </div>
+            <div class="form-group"></div>
+                <label for="address">Адрес доставки</label>
+                <textarea class="form-control" id="address" name="address" rows="7"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="comment">Коментарии</label>
+                <textarea class="form-control" id="comment" name="comment" rows="7"></textarea>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="agreement" name="agreement">
+                <label class="form-check-label" for="agreement" id="agreementLabel" name="agreement">
+                    Я даю добровольное согласие на обработку персональных данных.
+                </label>
+            </div>
+            <button class="btn btn-primary" type="button" id="orderCreate">Сделать заказ</button>
+        </div>
+    </div>
+{{/if}}
+
+<p id="pCartEmpty"  style="visibility: {{#if toys}}hidden{{else}} visible {{/if}}">Корзина пуста</p>
+
+<div class="modal fade" id="orderPopup" tabindex="-1" role="dialog" aria-labelledby="orderPopupLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderLabel">Заказ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Уважаемый <span id ='fullNamePopup'></span>, спасибо, за Ваше внимание к нашему магазину.
+                    Ваш заказ отправлен в обработку. Мы скоро свяжемся с Вами.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="form-button" data-dismiss="modal">ОК</button>
+            </div>
+        </div>
+    </div>
+</div>

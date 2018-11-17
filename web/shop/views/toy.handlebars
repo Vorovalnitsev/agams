@@ -36,9 +36,9 @@
             <p>{{toy.weight}} гр.
             </p>
             <h6>Цена</h6>
-            <p class="product-price-main ">{{toy.price}} руб.
-                <img src="/icons/cart.svg" class="cart-img" id ="{{toy._id}}" action = "productIncrease1">
-                <span id="spanToyQuantity{{toy._id}}">{{#if toy.quantity}}x{{/if}}{{toy.quantity}}</span>
+            <p>{{toy.price}} руб. 
+                <span class = "increaseIntoCart" value ="{{toy.id}}"><img src="/img/cart.png" width="32px" height="32px"></span>
+                <span class="toyQuantity">{{#if toy.quantity}} x {{/if}}{{toy.quantity}}</span>
             </p>
         </div>
     </div>

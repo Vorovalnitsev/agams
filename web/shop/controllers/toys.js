@@ -10,9 +10,19 @@ module.exports.index = function index(req, res) {
 module.exports.getRecordById = function getRecordById(req, res) {
     let id = req.params.id;
     modelPhotos.getPhotosByProductId(id, function (photos) {
+        let toyInOrder;
         model.getRecordById(id, function (result) {
-            res.render('toy.handlebars', {toy: result, photos: photos});
+            if (req.session.order){
+                let order = req.session.order;
+                for (var i = 0; i<order.length; i++){
+                    if (order[i].id == id)
+                    toyInOrder = order[i];
+                }
+            }
+            toy = result;
+            if (toyInOrder)
+                toy.quantity = toyInOrder.quantity;
+            res.render('toy.handlebars', {toy: toy, photos: photos});
         });
     })
-
 }

@@ -6,7 +6,7 @@ module.exports.setConnection = function setConnection (mySqlConnection){
 }
 
 //Указанное количество записей с указанной позиции.
-module.exports.getRecords = function getRecordsFromQuantity (callback) {
+module.exports.getRecords = function getRecords (callback) {
     let sql = 'SELECT products.id as id, ' +
         'products.name as name, ' +
         'products.vendorCode as vendorCode, ' +
@@ -30,7 +30,7 @@ module.exports.getRecords = function getRecordsFromQuantity (callback) {
     mySql.query(sql, function (err, result) {
         if (err) {
             let date = new Date();
-            console.log(date + ' Agams Shop- Products - getRecords');
+            console.log(date + ' Agams Shop - Products - getRecords');
             console.log(err);
             return callback(null);
         }

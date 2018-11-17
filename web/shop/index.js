@@ -43,7 +43,8 @@ web.use(session({
 }));
 //статические пути
 web.use(express.static(__dirname  +  '/../public'));
-
+web.use('/js', express.static(__dirname + '/js'));
+web.use('/css', express.static(__dirname + '/css')); 
 
 web.use(function (req, res, next){
     console.log(req.url);;
