@@ -1,4 +1,3 @@
-
 {{#if toys}}
     <table class="table" id="tableToys">
         <tr>
@@ -37,9 +36,7 @@
                 {{total}} руб.
             </td>
         </tr>
-
     </table>
-
     <div class="col-sm" id="formCart">
             <h5> Для подтверждения заказа просим Вас заполнить информацию для связи с Вами</h5>
         <div class="col-sm-8">
@@ -57,7 +54,6 @@
                     Пожалуйста введите Имя.
                 </div>
             </div>
-            
             <div class="form-group">
                 <label for="email">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="example@example.com">
@@ -91,9 +87,9 @@
     </div>
 {{/if}}
 
-<p id="pCartEmpty"  style="visibility: {{#if toys}}hidden{{else}} visible {{/if}}">Корзина пуста</p>
+<p id="pCartEmpty" style="visibility: {{#if toys}}hidden{{else}} visible {{/if}}">Корзина пуста</p>
 
-<div class="modal fade" id="orderPopup" tabindex="-1" role="dialog" aria-labelledby="orderPopupLabel" aria-hidden="true">
+<div class="modal fade" id="popupOrderIsCreated" tabindex="-1" role="dialog" aria-labelledby="orderPopupLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -107,7 +103,7 @@
                     Ваш заказ отправлен в обработку. Мы скоро свяжемся с Вами.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="form-button" data-dismiss="modal">ОК</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">ОК</button>
             </div>
         </div>
     </div>

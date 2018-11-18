@@ -99,13 +99,24 @@ $(document).ready(function(){
         $.post('/orders/create',
                 order)
                 .done(function (result) {
-                    if (result)
-                        if(result.status == 'error'){
+                    if (result){
+                        if(result.status == 'errorFieldIsEmpty'){
                             result.errorFields.forEach(function (field, i, arr){
-                                console.log(field);
                                 $('#'+field).addClass('is-invalid');
                             })
-                        } 
+                        }
+                        if(result.status == 'errorCreateOrder'){
+                                alert('Ошибка создания заказа');
+                        }
+                        if(result.status == 'orderIsCreated'){
+                            showToysQuantity();
+                            $('#popupOrderIsCreated').find('#fullNamePopup').text($("#firstName").val());
+                            $('#popupOrderIsCreated').modal('show');
+                            $('#tableToys').empty();
+                            $('#formCart').empty();
+                            $('#pCartEmpty').css({'visibility' : 'visible'});
+                        }
+                    }                
                     $('#orderCreate').prop('disabled', false);      
                 })
                 .fail(function () {

@@ -1,5 +1,5 @@
-model = require('../models').products;
-modelPhotos = require('../models').photos;
+const model = require('../models').products;
+const modelPhotos = require('../models').photos;
 //Каталог игрушек
 module.exports.index = function index(req, res) {
     model.getRecords(function (result) {
