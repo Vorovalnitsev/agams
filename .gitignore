@@ -12,3 +12,4 @@ web/.DS_Store
 web/public/.DS_Store
 web/public/img/.DS_Store
 web/public/img/
+web/public/img/toys/*
