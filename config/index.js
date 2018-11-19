@@ -56,7 +56,7 @@ module.exports.getWebServerShopParameterTest = function getWebServerShopParamete
 //Настройки для папки с изображениями
 
 module.exports.getImgPathProduction = function getImgPathProduction() {
-    return '/home/node/current/agams/web/public/img/';
+    return '/home/node/agams/current/web/public/img/';
 }
 
 
