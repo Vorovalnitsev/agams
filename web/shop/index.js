@@ -9,16 +9,19 @@ const expressMySQLSession = require('express-mysql-session');
 
 //настройка express
 let webServerParameter;
-
+let expressMainLayout;
+let mySQLServerParameters;
 //проверяем переменные окружения
 switch (process.env.NODE_ENV){
     case 'production':
         webServerParameter = config.getWebServerShopParameterProduction();
         mySQLServerParameters = config.getMySqlConnectionStringProduction();
+        expressMainLayout = 'main';
         break;
     default:
         webServerParameter = config.getWebServerShopParameterTest();
         mySQLServerParameters = config.getMySqlConnectionStringTest();
+        expressMainLayout = 'mainTest';
         break;
 }
 
@@ -30,7 +33,7 @@ web.set('views', __dirname + '/views');
 
 
 web.engine('handlebars', expressHandlebars({
-    defaultLayout : 'main',
+    defaultLayout : expressMainLayout,
     layoutsDir: __dirname + '/views/layouts'
 }));
 web.set('view engine', 'handlebars');

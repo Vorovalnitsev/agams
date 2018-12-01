@@ -39,19 +39,16 @@ passport.deserializeUser(function(id, done) {
 //настройка express
 let webServerParameters;
 let mySQLServerParameters;
-let expressMainLayout;
 
 //проверяем переменные окружения
 switch (process.env.NODE_ENV){
     case 'production':
         webServerParameters = config.getWebServerAdminParameterProduction();
         mySQLServerParameters = config.getMySqlConnectionStringProduction();
-        expressMainLayout = 'main';
         break;
     default:
         webServerParameters = config.getWebServerAdminParameterTest();
         mySQLServerParameters = config.getMySqlConnectionStringTest();
-        expressMainLayout = 'mainTest';
         break;
 }
 
