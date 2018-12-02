@@ -6,6 +6,7 @@ const controllerIndex = require('../controllers');
 const controllerToys = require('../controllers/toys');
 const controllerCarts = require('../controllers/carts');
 const controllerOrders = require('../controllers/orders');
+const controllerContacts = require('../controllers/contacts');
 
 module.exports = function (web) {
     //главная страница
@@ -15,6 +16,8 @@ module.exports = function (web) {
     //выводим игрушку по id
     web.get('/toys/:id', controllerToys.getRecordById);
 
+    //Контакты
+    web.get('/contacts', controllerContacts.index);
 
     //Корзина
     web.get('/cart', controllerCarts.index);

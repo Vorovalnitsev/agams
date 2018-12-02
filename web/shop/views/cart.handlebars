@@ -37,18 +37,17 @@
             </td>
         </tr>
     </table>
-    <div class="col-sm" id="formCart">
+    <div class="col-sm-8" id="formCart">
             <h5> Для подтверждения заказа просим Вас заполнить информацию для связи с Вами</h5>
-        <div class="col-sm-8">
             <div class="form-group">
-                <label for="lastName">Фамилия: </label>
+                <label for="lastName">Фамилия </label>
                 <input type="text" class="form-control" id="lastName" name="lastName">
                 <div class="invalid-feedback">
                     Пожалуйста введите Фамилию.
                 </div>
             </div>
             <div class="form-group">
-                <label for="firstName">Имя: </label>
+                <label for="firstName">Имя </label>
                 <input type="text" class="form-control" id="firstName" name="firstName">
                 <div class="invalid-feedback">
                     Пожалуйста введите Имя.
@@ -68,7 +67,7 @@
                     Пожалуйста введите телефон для связи.
                 </div>
             </div>
-            <div class="form-group"></div>
+            <div class="form-group">
                 <label for="address">Адрес доставки</label>
                 <textarea class="form-control" id="address" name="address" rows="7"></textarea>
             </div>
@@ -83,7 +82,6 @@
                 </label>
             </div>
             <button class="btn btn-primary" type="button" id="orderCreate">Сделать заказ</button>
-        </div>
     </div>
 {{/if}}
 
