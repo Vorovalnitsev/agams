@@ -35,7 +35,14 @@ const parametersRecords = {
         modalName: "editAgeModal",
         path: "/users"
     },
-
+    "/orders": {
+        title: "Заказы",
+        addButton: "none",
+        recordsTableTableHead: ["id", "Дата создания", "Фамилия", "Имя", "Телефон", "E-mail","П", "Г", "О", "Д"],
+        recordsTableFieldName: ["id", "createdDate", "lastName", "firstName", "phone", "email", "confirmed", "ready", "sent", "delivered"],
+        modalName: "editOrder",
+        path: "/orders"
+    },
 }
 
 let nameOfModalToOpen;
@@ -70,6 +77,253 @@ function initPage() {
         $("#addRecordButton").text(records.addButton);
         records.recordsTableTableHead.forEach(function (item , i , arr ){
             $("#recordsTableHead").append('<th>' + item + '</th>');
+        });
+
+        getRecords();
+        $(window).scroll(function () {
+            if($(window).scrollTop() + $(window).height() >= $(document).height() - 200
+                && !inProgress
+            ) {
+                getRecords();
+            }
+        });
+
+        $(window).resize(function () {
+            if($(window).height() >= $(document).height()
+                && !inProgress
+            ) {
+                getRecords();
+            }
+        });
+
+        $('#addRecordButton').on('click', function () {
+            let url = document.location.pathname;
+            if (url =='/products')
+                showProduct();
+            if (url =='/ages')
+                showAge();
+            if (url =='/categories')
+                showCategory();
+            if (url =='/users')
+                showUser();
+        });
+
+        $('#recordsTable').on('click', 'tr', function () {
+            let url = document.location.pathname;
+            if (url =='/products'){
+                showProduct($(this).attr('id'));
+            }
+            if (url =='/ages'){
+                showAge($(this).attr('id'));
+            }
+
+            if (url =='/categories'){
+                showCategory($(this).attr('id'));
+            }
+
+            if (url =='/users'){
+                showUser($(this).attr('id'));
+            }
+
+        });
+        $('.saveRecord').click(function () {
+            let url = document.location.pathname;
+
+            if (url == '/products'){
+                let visible = 0;
+                let hit = 0;
+
+                if ($('#editProductModal').find('#visible').is(':checked'))
+                    visible = 1;
+                if ($('#editProductModal').find('#hit').is(':checked'))
+                    hit = 1;
+                let data = {
+                    id: $('#idRecord').val(),
+                    name: $('#editProductModal').find('#nameProduct').val(),
+                    vendorCode: $('#editProductModal').find('#vendorCode').val(),
+                    description: $('#editProductModal').find('#description').val(),
+                    idAge: $('#editProductModal').find('#agesList').val(),
+                    price: $('#editProductModal').find('#price').val(),
+                    weight: $('#editProductModal').find('#weight').val(),
+                    length: $('#editProductModal').find('#length').val(),
+                    width: $('#editProductModal').find('#width').val(),
+                    height: $('#editProductModal').find('#height').val(),
+                    visible: visible,
+                    hit: hit
+                }
+                saveRecord(url, data);
+            }
+
+            if (url == '/ages')
+                saveRecord(url, {
+                    id: $('#idRecord').val(),
+                    name: $('#editAgeModal').find('#nameAge').val()
+                });
+            if (url == '/categories')
+                saveRecord(url, {
+                    id: $('#idRecord').val(),
+                    name: $('#editCategoryModal').find('#nameCategory').val()
+                });
+            if (url == '/users')
+                saveRecord(url, {
+                    id: $('#idRecord').val(),
+                    userName: $('#editUserModal').find('#userName').val(),
+                    fullName: $('#editUserModal').find('#fullName').val(),
+                    email: $('#editUserModal').find('#email').val()
+                });
+        });
+
+        $('.productOpenButton').click( function () {
+            nameOfModalToOpen ='editProductModal';
+            $('.modal').modal('hide');
+        });
+        $('.productPhotosOpenButton').click( function () {
+            if ($('#idRecord').val()) {
+                nameOfModalToOpen = 'editProductPhotosModal';
+                $('.modal').modal('hide');
+            }
+        });
+        $('.productCategoriesOpenButton').click( function () {
+            if ($('#idRecord').val()){
+                nameOfModalToOpen ='editProductCategoriesModal';
+                $('.modal').modal('hide');
+            }
+        });
+
+        $('#addCategory').click(function () {
+            let idProduct = $('#idRecord').val();
+            if ($('#editProductCategoriesModal').find('#categoriesList').val()){
+                let productCategory = {
+                    idProduct: idProduct,
+                    idCategory: $('#editProductCategoriesModal').find('#categoriesList').val()
+                };
+                $.post('/products-categories/' + idProduct + '/add' , productCategory,
+                    function (data) {
+                        if (data){
+                            appendCategoryToProductCategoriesModal(data);
+                            $.get('/products-categories/' + idProduct + '/available', function(data) {
+                                $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                                data.forEach(function (item, i, arr) {
+                                    $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                                        item.name + '</option>');
+                                });
+                            });
+                        }
+                    });
+            }
+        });
+        
+        $('#productCategories').on('click', '.removeCategoryFromProduct', function () {
+            let idCategory = $(this).closest('tr').attr('id');
+            let idProduct = $('#idRecord').val();
+            $.get('/products-categories/' + idProduct + '/' + idCategory +'/remove', function(data) {
+                if (data){
+                    $('#editProductCategoriesModal').find('#' +data.idCategory).remove();
+                    $.get('/products-categories/' + idProduct + '/available', function(data) {
+                        $('#editProductCategoriesModal').find('#categoriesList>option').remove();
+                        data.forEach(function (item, i, arr) {
+                            $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
+                                item.name + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+
+        $('#addPhotoButton').click(function (event) {
+            $('#addPhotoButton').prop('disabled', true);
+            let idProduct = $('#idRecord').val();
+            let files = $('input[type=file]').prop('files');
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            var data = new FormData();
+            $.each( files, function( key, value ){
+                data.append( key, value );
+            });
+
+            // Отправляем запрос
+
+            $.ajax({
+                url: '/products-photos/' + idProduct + '/add',
+                type: 'POST',
+                data: data,
+                cache: false,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function( data, textStatus, jqXHR ){
+
+                    // Если все ОК
+                    $('#addPhotoButton').prop('disabled', false);
+                    $('input[type=file]').prop('value', '');
+
+                    if( typeof data.error === 'undefined' ){
+                        // Файлы успешно загружены, делаем что нибудь здесь
+
+                        // выведем пути к загруженным файлам в блок '.ajax-respond'
+                        appendPhotoToProductPhotosModal(data);
+                    }
+                    else{
+                        console.log('ОШИБКИ ОТВЕТА сервера: ' + data.error );
+                    }
+                },
+                error: function( jqXHR, textStatus, errorThrown ){
+                    console.log('ОШИБКИ AJAX запроса: ' + textStatus );
+                    $('#addPhotoButton').prop('disabled', false);
+                    $('input[type=file]').prop('value', '');
+                }
+            });
+        });
+        $('#productPhotos').on('click', '.removePhotoFromProduct', function () {
+            let idPhoto = $(this).closest('tr').attr('id');
+            let idProduct = $('#idRecord').val();
+            $.get('/products-photos/' + idProduct + '/' + idPhoto +'/remove', function(data) {
+                if (data){
+                        $('#editProductPhotosModal').find('#' + data.idPhoto).remove();
+                    }
+            });
+        });
+        $('#productPhotos').on('click', '.defaultPhotoFromProduct', function () {
+            let idPhoto = $(this).closest('tr').attr('id');
+            let idProduct = $('#idRecord').val();
+            $.get('/products-photos/' + idProduct + '/' + idPhoto +'/default', function(data) {
+                if (data){
+                    $('#editProductPhotosModal').find('.table-success').removeClass();
+                    $('#editProductPhotosModal').find('#' + data.idPhoto).addClass('table-success');
+                }
+            });
+        });
+
+        $('.userPasswordChangeOpenButton').click( function () {
+            if ($('#idRecord').val()){
+                nameOfModalToOpen ='editUserPasswordModal';
+                $('.modal').modal('hide');
+            }
+        });
+
+        $('.savePassword').click( function () {
+            if ($('#idRecord').val()){
+                $.post('/users/' + $('#idRecord').val() + '/changepassword',
+                    {
+                        id: $('#idRecord').val(),
+                        password: $('#editUserPasswordModal').find('#password').val(),
+                        repassword: $('#editUserPasswordModal').find('#repassword').val(),
+
+                    })
+                    .done(function (result) {
+                        if (result)
+                            if (result.err) {
+                                alert('Ошибка изменения пароля');
+                            }
+                            else
+                                $('.modal').modal('hide');
+                    })
+                    .fail(function () {
+                        alert('Ошибка сохранения данных');
+                    });
+            }
         });
     }
 }
@@ -273,6 +527,7 @@ function showUser(id){
     }
 
 }
+
 function showUserPassword(id){
     if(id)
         $.get('/users/' + id,
@@ -309,251 +564,6 @@ function saveRecord(url, data){
 
 $(document).ready(function () {
     initPage();
-    getRecords();
-    $(window).scroll(function () {
-        if($(window).scrollTop() + $(window).height() >= $(document).height() - 200
-            && !inProgress
-        ) {
-            getRecords();
-        }
-    });
-
-    $(window).resize(function () {
-        if($(window).height() >= $(document).height()
-            && !inProgress
-        ) {
-            getRecords();
-        }
-    });
-
-    $('#addRecordButton').on('click', function () {
-        let url = document.location.pathname;
-        if (url =='/products')
-            showProduct();
-        if (url =='/ages')
-            showAge();
-        if (url =='/categories')
-            showCategory();
-        if (url =='/users')
-            showUser();
-    });
-
-    $('#recordsTable').on('click', 'tr', function () {
-        let url = document.location.pathname;
-        if (url =='/products'){
-            showProduct($(this).attr('id'));
-        }
-        if (url =='/ages'){
-            showAge($(this).attr('id'));
-        }
-
-        if (url =='/categories'){
-            showCategory($(this).attr('id'));
-        }
-
-        if (url =='/users'){
-            showUser($(this).attr('id'));
-        }
-
-    });
-    $('.saveRecord').click(function () {
-        let url = document.location.pathname;
-
-        if (url == '/products'){
-            let visible = 0;
-            let hit = 0;
-
-            if ($('#editProductModal').find('#visible').is(':checked'))
-                visible = 1;
-            if ($('#editProductModal').find('#hit').is(':checked'))
-                hit = 1;
-            let data = {
-                id: $('#idRecord').val(),
-                name: $('#editProductModal').find('#nameProduct').val(),
-                vendorCode: $('#editProductModal').find('#vendorCode').val(),
-                description: $('#editProductModal').find('#description').val(),
-                idAge: $('#editProductModal').find('#agesList').val(),
-                price: $('#editProductModal').find('#price').val(),
-                weight: $('#editProductModal').find('#weight').val(),
-                length: $('#editProductModal').find('#length').val(),
-                width: $('#editProductModal').find('#width').val(),
-                height: $('#editProductModal').find('#height').val(),
-                visible: visible,
-                hit: hit
-            }
-            saveRecord(url, data);
-        }
-
-        if (url == '/ages')
-            saveRecord(url, {
-                id: $('#idRecord').val(),
-                name: $('#editAgeModal').find('#nameAge').val()
-            });
-        if (url == '/categories')
-            saveRecord(url, {
-                id: $('#idRecord').val(),
-                name: $('#editCategoryModal').find('#nameCategory').val()
-            });
-        if (url == '/users')
-            saveRecord(url, {
-                id: $('#idRecord').val(),
-                userName: $('#editUserModal').find('#userName').val(),
-                fullName: $('#editUserModal').find('#fullName').val(),
-                email: $('#editUserModal').find('#email').val()
-            });
-    });
-
-    $('.productOpenButton').click( function () {
-        nameOfModalToOpen ='editProductModal';
-        $('.modal').modal('hide');
-    });
-    $('.productPhotosOpenButton').click( function () {
-        if ($('#idRecord').val()) {
-            nameOfModalToOpen = 'editProductPhotosModal';
-            $('.modal').modal('hide');
-        }
-    });
-    $('.productCategoriesOpenButton').click( function () {
-        if ($('#idRecord').val()){
-            nameOfModalToOpen ='editProductCategoriesModal';
-            $('.modal').modal('hide');
-        }
-    });
-
-    $('#addCategory').click(function () {
-        let idProduct = $('#idRecord').val();
-        if ($('#editProductCategoriesModal').find('#categoriesList').val()){
-            let productCategory = {
-                idProduct: idProduct,
-                idCategory: $('#editProductCategoriesModal').find('#categoriesList').val()
-            };
-            $.post('/products-categories/' + idProduct + '/add' , productCategory,
-                function (data) {
-                    if (data){
-                        appendCategoryToProductCategoriesModal(data);
-                        $.get('/products-categories/' + idProduct + '/available', function(data) {
-                            $('#editProductCategoriesModal').find('#categoriesList>option').remove();
-                            data.forEach(function (item, i, arr) {
-                                $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
-                                    item.name + '</option>');
-                            });
-                        });
-                    }
-                });
-        }
-    });
-    $('#productCategories').on('click', '.removeCategoryFromProduct', function () {
-        let idCategory = $(this).closest('tr').attr('id');
-        let idProduct = $('#idRecord').val();
-        $.get('/products-categories/' + idProduct + '/' + idCategory +'/remove', function(data) {
-            if (data){
-                $('#editProductCategoriesModal').find('#' +data.idCategory).remove();
-                $.get('/products-categories/' + idProduct + '/available', function(data) {
-                    $('#editProductCategoriesModal').find('#categoriesList>option').remove();
-                    data.forEach(function (item, i, arr) {
-                        $('#editProductCategoriesModal').find('#categoriesList').append('<option value = "' + item.id + '">' +
-                            item.name + '</option>');
-                    });
-                });
-            }
-        });
-    });
-
-    $('#addPhotoButton').click(function (event) {
-        $('#addPhotoButton').prop('disabled', true);
-        let idProduct = $('#idRecord').val();
-        let files = $('input[type=file]').prop('files');
-
-        event.stopPropagation();
-        event.preventDefault();
-
-        var data = new FormData();
-        $.each( files, function( key, value ){
-            data.append( key, value );
-        });
-
-        // Отправляем запрос
-
-        $.ajax({
-            url: '/products-photos/' + idProduct + '/add',
-            type: 'POST',
-            data: data,
-            cache: false,
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            success: function( data, textStatus, jqXHR ){
-
-                // Если все ОК
-                $('#addPhotoButton').prop('disabled', false);
-                $('input[type=file]').prop('value', '');
-
-                if( typeof data.error === 'undefined' ){
-                    // Файлы успешно загружены, делаем что нибудь здесь
-
-                    // выведем пути к загруженным файлам в блок '.ajax-respond'
-                    appendPhotoToProductPhotosModal(data);
-                }
-                else{
-                    console.log('ОШИБКИ ОТВЕТА сервера: ' + data.error );
-                }
-            },
-            error: function( jqXHR, textStatus, errorThrown ){
-                console.log('ОШИБКИ AJAX запроса: ' + textStatus );
-                $('#addPhotoButton').prop('disabled', false);
-                $('input[type=file]').prop('value', '');
-            }
-        });
-    });
-    $('#productPhotos').on('click', '.removePhotoFromProduct', function () {
-        let idPhoto = $(this).closest('tr').attr('id');
-        let idProduct = $('#idProduct').val();
-        $.get('/products-photos/' + idProduct + '/' + idPhoto +'/remove', function(data) {
-            if (data){
-                    $('#editProductPhotosModal').find('#' + data.idPhoto).remove();
-                }
-        });
-    });
-    $('#productPhotos').on('click', '.defaultPhotoFromProduct', function () {
-        let idPhoto = $(this).closest('tr').attr('id');
-        let idProduct = $('#idRecord').val();
-        $.get('/products-photos/' + idProduct + '/' + idPhoto +'/default', function(data) {
-            if (data){
-                $('#editProductPhotosModal').find('.table-success').removeClass();
-                $('#editProductPhotosModal').find('#' + data.idPhoto).addClass('table-success');
-            }
-        });
-    });
-
-    $('.userPasswordChangeOpenButton').click( function () {
-        if ($('#idRecord').val()){
-            nameOfModalToOpen ='editUserPasswordModal';
-            $('.modal').modal('hide');
-        }
-    });
-
-    $('.savePassword').click( function () {
-        if ($('#idRecord').val()){
-            $.post('/users/' + $('#idRecord').val() + '/changepassword',
-                {
-                    id: $('#idRecord').val(),
-                    password: $('#editUserPasswordModal').find('#password').val(),
-                    repassword: $('#editUserPasswordModal').find('#repassword').val(),
-
-                })
-                .done(function (result) {
-                    if (result)
-                        if (result.err) {
-                            alert('Ошибка изменения пароля');
-                        }
-                        else
-                            $('.modal').modal('hide');
-                })
-                .fail(function () {
-                    alert('Ошибка сохранения данных');
-                });
-        }
-    });
-
+    
 })
 

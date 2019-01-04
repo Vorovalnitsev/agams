@@ -9,6 +9,7 @@ const controllerProducts = require('../controllers/products.js');
 const controllerProductsCategories = require('../controllers/products-categories.js');
 const controllerProductsPhotos = require('../controllers/products-photos.js');
 const controllerUsers = require('../controllers/users.js');
+const controllerOrders = require('../controllers/orders.js');
 const passport = require('passport');
 
 function mustAuthenticatedMw (req, res, next) {
@@ -125,6 +126,16 @@ module.exports = function (web) {
     web.post('/users/add', controllerUsers.addRecord);
     //Изменяем пароль пользователя
     web.post('/users/:id/changepassword', controllerUsers.changePassword);
+
+    //ЗАКАЗЫ
+    //СТАТИКА
+    //Центральная страница
+    web.get('/orders', controllerOrders.index);
+
+    //AJAX
+    //Отдаем справочник продуктов. Указанное количество записей с указанной позиции.
+    web.get('/orders/:from/:quantity', controllerOrders.getRecordsFromQuantity);
+
     /*
 
 

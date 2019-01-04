@@ -50,7 +50,8 @@ web.use('/js', express.static(__dirname + '/js'));
 web.use('/css', express.static(__dirname + '/css')); 
 
 web.use(function (req, res, next){
-    console.log(req.url);;
+    if (process.env.NODE_ENV!='production')
+        console.log(req.url);
     next();
 });
 
