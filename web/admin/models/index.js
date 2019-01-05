@@ -8,6 +8,7 @@ const productsPhotos = require('./products-photos.js');
 const photos = require('./photos.js');
 const users  = require('./users.js');
 const orders  = require('./orders.js');
+const ordersProducts  = require('./orders-products.js');
 
 const config = require('../../../config');
 
@@ -49,6 +50,7 @@ productsPhotos.setConnection(mySqlConnection);
 photos.setConnection(mySqlConnection);
 users.setConnection(mySqlConnection);
 orders.setConnection(mySqlConnection);
+ordersProducts.setConnection(mySqlConnection);
 
 //Возвращаем модель  ages
 module.exports.ages = ages;
@@ -66,3 +68,5 @@ module.exports.photos = photos;
 module.exports.users = users;
 //Возвращаем модель orders
 module.exports.orders = orders;
+//Возвращаем модель ordersProducts
+module.exports.ordersProducts = ordersProducts;

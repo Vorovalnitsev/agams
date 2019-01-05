@@ -10,6 +10,7 @@ const controllerProductsCategories = require('../controllers/products-categories
 const controllerProductsPhotos = require('../controllers/products-photos.js');
 const controllerUsers = require('../controllers/users.js');
 const controllerOrders = require('../controllers/orders.js');
+const controllerOrdersProducts = require('../controllers/orders-products.js');
 const passport = require('passport');
 
 function mustAuthenticatedMw (req, res, next) {
@@ -107,7 +108,7 @@ module.exports = function (web) {
     web.post('/products-photos/:id/add', controllerProductsPhotos.addRecord);
     //Удаляем фотографию из продукта
     web.get('/products-photos/:idProduct/:idPhoto/remove', controllerProductsPhotos.removeRecord);
-    //Отдаем справочник продуктов. Указанное количество записей с указанной позиции.
+    //Устанавливаем фотографию по-умолчанию
     web.get('/products-photos/:idProduct/:idPhoto/default', controllerProductsPhotos.setDefault);
 
     //ПОЛЬЗОВАТЕЛИ
@@ -135,7 +136,17 @@ module.exports = function (web) {
     //AJAX
     //Отдаем справочник продуктов. Указанное количество записей с указанной позиции.
     web.get('/orders/:from/:quantity', controllerOrders.getRecordsFromQuantity);
+    //Отдаем указанный заказ по ID
+    web.get('/orders/:id', controllerOrders.getRecordById);
 
+    //ЗАКАЗ-ПРОДУКТЫ
+    //СТАТИКА
+
+    //AJAX
+    //Отдаем заказ-продукты по ID заказа
+    web.get('/orders-products/:id', controllerOrdersProducts.getProductsByOrderId);
+    
+    
     /*
 
 

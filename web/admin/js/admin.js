@@ -125,6 +125,11 @@ function initPage() {
                 showUser($(this).attr('id'));
             }
 
+            if (url =='/orders'){
+                showOrder($(this).attr('id'));
+            }
+
+
         });
         $('.saveRecord').click(function () {
             let url = document.location.pathname;
@@ -538,6 +543,50 @@ function showUserPassword(id){
                 $('#idRecord').val(data.id);
                 $('#editUserPasswordModal').modal('show');
             });
+}
+
+function showOrder(id) {
+    if (id){
+        $.get('/orders/' + id,
+            function(data) {
+                $('#editOrderModal').find('#editOrderModalLabel').text('Редактирование ID - ' + data.id);
+                $('#editOrderModal').find('#lastName').val(data.lastName);
+                $('#editOrderModal').find('#firstName').val(data.firstName);
+                $('#idRecord').val(data.id);
+                $('#editOrderModal').find('#email').val(data.email);
+                $('#editOrderModal').find('#phone').val(data.phone);
+                $('#editOrderModal').find('#address').val(data.address);
+                $('#editOrderModal').find('#comment').val(data.comment);
+                $('#editOrderModal').modal('show');
+                });
+        $.get('/orders-products/' + id,
+            function(data) {
+                data.forEach(function (item, i, arr) {
+                    $('#editOrderModal').find('#orderProducts').append(
+                        '<tr id = "' + item.id + '">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + item.vendorName + '</td>' +
+                        '<td>' + item.quantity + '</td>' +
+                        '<td>' + item.price + '</td>' +
+                        '</tr>');
+                    });
+                });
+
+    }
+        
+    else{
+        $('#editOrderModal').find('#editOrderModalLabel').text('Новвый заказ');
+                $('#editOrderModal').find('#lastName').val('');
+                $('#editOrderModal').find('#firstName').val('');
+                $('#idRecord').val('');
+                $('#editOrderModal').find('#email').val('');
+                $('#editOrderModal').find('#phone').val('');
+                $('#editOrderModal').find('#address').val('');
+                $('#editOrderModal').find('#comment').val('');
+                $('#editOrderModal').modal('show');
+    }
+
 }
 
 function saveRecord(url, data){

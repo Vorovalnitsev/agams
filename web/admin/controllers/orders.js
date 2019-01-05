@@ -14,14 +14,14 @@ module.exports.getRecordsFromQuantity = function getRecordsFromQuantity(req, res
     });
 }
 
-//Отдаем указанную категорию по ID
+//Отдаем указанный заказ по ID
 module.exports.getRecordById = function getRecordById(req, res){
     model.getRecordById(req.params.id, function (result) {
        res.send(result);
     });
 }
 
-//Добавляем новую категорию
+/** ///Добавляем новую категорию
 module.exports.addRecord = function addRecord(req, res){
     model.addRecord({name: req.body.name}, function (result) {
         res.send(result);
@@ -34,4 +34,4 @@ module.exports.updateRecord = function updateRecord(req, res){
         res.send(result);
     })
 }
-
+**/

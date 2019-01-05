@@ -304,3 +304,58 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editOrderModal" tabindex="-1" role="dialog" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOrderModalLabel">Заказ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                        <div class="form-group">
+                            <label for="order-lastName" class="col-form-label">Фамилия:</label>
+                            <input type="text" class="form-control" id="lastName">
+                            <label for="order-firstName" class="col-form-label">Имя:</label>
+                            <input type="text" class="form-control" id="firstName">
+                            <label for="order-phone" class="col-form-label">Телефон:</label>
+                            <input type="text" class="form-control" id="phone">
+                            <label for="order-email" class="col-form-label">E-mail:</label>
+                            <input type="text" class="form-control" id="email">
+                            <label for="order-address">Адрес доставки:</label>
+                            <textarea class="form-control" id="address" name="address" rows="7"></textarea>
+                            <label for="order-comment">Коментарий:</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="7"></textarea>
+                        </div>
+                </form>
+
+                <table class="table" id="orderProducts">
+                    <thead>
+                    <th>
+                        id
+                    </th>
+                    <th>
+                        Название
+                    </th>
+                    <th>
+                        Артикул
+                    </th>
+                    <th>
+                        Количесво
+                    </th>
+                    <th>
+                        Цена
+                    </th>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary savePassword">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
