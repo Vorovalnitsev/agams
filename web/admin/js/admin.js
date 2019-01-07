@@ -37,7 +37,7 @@ const parametersRecords = {
     },
     "/orders": {
         title: "Заказы",
-        addButton: "none",
+        addButton: "Новый заказ",
         recordsTableTableHead: ["id", "Дата создания", "Фамилия", "Имя", "Телефон", "E-mail","П", "Г", "О", "Д"],
         recordsTableFieldName: ["id", "createdDate", "lastName", "firstName", "phone", "email", "confirmed", "ready", "sent", "delivered"],
         modalName: "editOrder",
@@ -176,6 +176,36 @@ function initPage() {
                     fullName: $('#editUserModal').find('#fullName').val(),
                     email: $('#editUserModal').find('#email').val()
                 });
+        
+            if (url == '/orders'){
+                let confirmed = 0;
+                let ready = 0;
+                let sent = 0;
+                let delivered = 0;
+
+                if ($('#editOrderModal').find('#confirmed').is(':checked'))
+                    confirmed = 1;
+                if ($('#editOrderModal').find('#ready').is(':checked'))
+                    ready = 1;
+                if ($('#editOrderModal').find('#sent').is(':checked'))
+                    sent = 1;
+                if ($('#editOrderModal').find('#delivered').is(':checked'))
+                    delivered = 1;
+                let data = {
+                    id: $('#idRecord').val(),
+                    firstName: $('#editOrderModal').find('#firstName').val(),
+                    lastName: $('#editOrderModal').find('#lastName').val(),
+                    address: $('#editOrderModal').find('#address').val(),
+                    phone: $('#editOrderModal').find('#phone').val(),
+                    email: $('#editOrderModal').find('#email').val(),
+                    comment: $('#editProductModal').find('#comment').val(),
+                    confirmed: confirmed,
+                    ready: ready,
+                    sent: sent,
+                    delivered: delivered
+                }
+                saveRecord(url, data);
+            }
         });
 
         $('.productOpenButton').click( function () {
@@ -547,6 +577,34 @@ function showUserPassword(id){
 
 function showOrder(id) {
     if (id){
+        $.get('/orders-products/' + id,
+            function(data) {
+                let total = 0;
+                $('#editOrderModal').find('#orderProducts>tr').remove();
+                data.forEach(function (item, i, arr) {
+                    $('#editOrderModal').find('#orderProducts').append(
+                        '<tr id = "' + item.id + '">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + item.vendorName + '</td>' +
+                        '<td>' + item.quantity + '</td>' +
+                        '<td>' + item.price + '</td>' +
+                        '<td>' + item.quantity*item.price + '</td>' +
+                        '</tr>'
+                    );
+                    total = total + item.quantity*item.price;
+                });
+                $('#editOrderModal').find('#orderProducts').append('<tr>' +
+                    '<td></td>' +
+                    '<td></td>' +
+                    '<td></td>' +
+                    '<td></td>' +
+                    '<td>Итого:</td>' +
+                    '<td>' + total + '</td>' +
+                    '</tr>'
+                );    
+
+        });
         $.get('/orders/' + id,
             function(data) {
                 $('#editOrderModal').find('#editOrderModalLabel').text('Редактирование ID - ' + data.id);
@@ -557,22 +615,9 @@ function showOrder(id) {
                 $('#editOrderModal').find('#phone').val(data.phone);
                 $('#editOrderModal').find('#address').val(data.address);
                 $('#editOrderModal').find('#comment').val(data.comment);
+                $('#editOrderModal').find('#created').val(data.comment);
                 $('#editOrderModal').modal('show');
-                });
-        $.get('/orders-products/' + id,
-            function(data) {
-                data.forEach(function (item, i, arr) {
-                    $('#editOrderModal').find('#orderProducts').append(
-                        '<tr id = "' + item.id + '">' +
-                        '<td>' + item.id + '</td>' +
-                        '<td>' + item.name + '</td>' +
-                        '<td>' + item.vendorName + '</td>' +
-                        '<td>' + item.quantity + '</td>' +
-                        '<td>' + item.price + '</td>' +
-                        '</tr>');
-                    });
-                });
-
+        });
     }
         
     else{
@@ -586,7 +631,6 @@ function showOrder(id) {
                 $('#editOrderModal').find('#comment').val('');
                 $('#editOrderModal').modal('show');
     }
-
 }
 
 function saveRecord(url, data){

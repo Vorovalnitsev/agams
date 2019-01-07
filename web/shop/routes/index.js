@@ -1,13 +1,16 @@
 /*
 Здесь расположены пути на основные страницы
+Решено, это сайт визитка и мы не занимаемс розничной торговлей. 
+Все пути для работы с корзиной будут закрыты.
  */
 
 const controllerIndex = require('../controllers');
 const controllerToys = require('../controllers/toys');
-const controllerCarts = require('../controllers/carts');
-const controllerOrders = require('../controllers/orders');
+//const controllerCarts = require('../controllers/carts');
+//const controllerOrders = require('../controllers/orders');
 const controllerContacts = require('../controllers/contacts');
-
+const controller404 = require('../controllers/404');
+const controller500 = require('../controllers/500');
 module.exports = function (web) {
     //главная страница
     web.get('/', controllerIndex.index);
@@ -18,20 +21,29 @@ module.exports = function (web) {
 
     //Контакты
     web.get('/contacts', controllerContacts.index);
+    
+    /*
+    Решено, это сайт визитка и мы не занимаемс розничной торговлей. 
+    Все пути для работы с корзиной будут закрыты.
+    */
 
     //Корзина
-    web.get('/cart', controllerCarts.index);
+    //web.get('/cart', controllerCarts.index);
     //отдаем количество игрушек в корзине
-    web.get('/cart/gettoysquantity', controllerCarts.getToysQuantity);
+    //web.get('/cart/gettoysquantity', controllerCarts.getToysQuantity);
     //отдаем игрушки в корзине
-    web.get('/cart/toys/', controllerCarts.getToys);
+    //web.get('/cart/toys/', controllerCarts.getToys);
 
     //добавляем игрушку в корзину
     //увеличиваем количество на 1
-    web.get('/cart/increaseIntoCart/:id', controllerCarts.increaseIntoCart);
-    web.get('/cart/reduceIntoCart/:id', controllerCarts.reduceIntoCart);
+    //web.get('/cart/increaseIntoCart/:id', controllerCarts.increaseIntoCart);
+    //web.get('/cart/reduceIntoCart/:id', controllerCarts.reduceIntoCart);
 
     //Заказ
-    web.post ('/orders/create', controllerOrders.createOrder);
+    //web.post ('/orders/create', controllerOrders.createOrder);
+
+    //Что-то пошло не так
+    web.use(controller404.index);
+    web.use(controller500.index);
 };
 

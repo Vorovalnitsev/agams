@@ -6,12 +6,15 @@ const async = require('async');
 
 //Создание заказа
 module.exports.createOrder = function createOrder(req,res){
+    let createdDate = new Date();
     let order = {
         lastName: req.body.lastName,
         firstName: req.body.firstName,
         phone: req.body.phone,
         address: req.body.address,
-        email: req.body.email
+        email: req.body.email,
+        created: true,
+        createdDate: createdDate
     };
 
     let status;

@@ -23,18 +23,60 @@ module.exports.getRecordById = function getRecordById(req, res){
 
 //Добавляем новый продукт
 module.exports.addRecord = function addRecord(req, res){
+    let name = 'N/A';
+    let vendorCode = '';
+    let description = '';
+    let idAge = null;
+    let price = 0;
+    let visible = false;
+    let hit = false;
+    let weight = 0;
+    let length = 0;
+    let width = 0;
+    let height = 0;
+
+    if (req.body.name)
+            name = req.body.name;
+
+    if (req.body.vendorCode)
+            vendorCode = req.body.vendorCode;
+
+    if (req.body.description)
+            description = req.body.description;
+
+    if (req.body.idAge)
+                idAge = req.body.idAge;
+    
+    if (req.body.price) 
+                price = req.body.price;
+    
+    visible = req.body.visible;
+    hit = req.body.hit;
+    
+    if (req.body.weight)
+                weight = req.body.weight;
+                
+    if (req.body.length)
+                length = req.body.length;
+    
+    if (req.body.width)
+                width = req.body.width;
+    
+    if (req.body.height)
+                height = req.body.height;            
+    
     model.addRecord({
-        name: req.body.name,
-        vendorCode: req.body.vendorCode,
-        description: req.body.description,
-        idAge: req.body.idAge,
-        price: req.body.price,
-        visible: req.body.visible,
-        hit: req.body.hit,
-        weight: req.body.weight,
-        length: req.body.length,
-        width: req.body.width,
-        height: req.body.height
+        name: name,
+        vendorCode: vendorCode,
+        description: description,
+        idAge: idAge,
+        price: price,
+        visible: visible,
+        hit: hit,
+        weight: weight,
+        length: length,
+        width: width,
+        height: height
     }, function (result) {
         res.send(result);
     })

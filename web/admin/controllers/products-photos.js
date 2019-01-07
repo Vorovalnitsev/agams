@@ -126,6 +126,6 @@ module.exports.setDefault = function setDefault(req, res) {
             idProduct: req.params.idProduct,
             idPhoto: req.params.idPhoto
         }, function (result) {
-            return res.send( result);
+            return res.send(result);
     });
 }

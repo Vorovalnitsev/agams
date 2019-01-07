@@ -15,15 +15,15 @@ module.exports.getRecordsFromQuantity = function getRecordsFromQuantity (from, q
         'orders.email as email, ' +
         'orders.comment as comment, ' +
         'orders.created as created, ' +
-        'orders.createdDate as createdDate, ' +
+        'DATE_FORMAT(orders.createdDate, \'%d.%m.%Y %T\') as createdDate, ' +
         'orders.confirmed as confirmed, ' +
-        'orders.confirmedDate as confirmedDate, ' +
+        'DATE_FORMAT(orders.confirmedDate, \'%d.%m.%Y %T\') as confirmedDate, ' +
         'orders.ready as ready, ' +
-        'orders.readyDate as readyDate, ' +
+        'DATE_FORMAT(orders.readyDate, \'%d.%m.%Y %T\') as readyDate, ' +
         'orders.sent as sent, ' +
-        'orders.sentDate as sentDate, ' +
+        'DATE_FORMAT(orders.sentDate, \'%d.%m.%Y %T\') as sentDate, ' +
         'orders.delivered as delivered, ' +
-        'orders.deliveredDate as deliveredDate ' +
+        'DATE_FORMAT(orders.deliveredDate, \'%d.%m.%Y %T\') as deliveredDate ' +
         'FROM orders ' +
         'LIMIT ' + from + ', ' + quantity;
     mySql.query(sql, function (err, result) {
@@ -47,15 +47,15 @@ module.exports.getRecordById = function getRecordById (id, callback) {
     'orders.email as email, ' +
     'orders.comment as comment, ' +
     'orders.created as created, ' +
-    'orders.createdDate as createdDate, ' +
+    'DATE_FORMAT(orders.createdDate, \'%d.%m.%Y %T\') as createdDate, ' +
     'orders.confirmed as confirmed, ' +
-    'orders.confirmedDate as confirmedDate, ' +
+    'DATE_FORMAT(orders.confirmedDate, \'%d.%m.%Y %T\') as confirmedDate, ' +
     'orders.ready as ready, ' +
-    'orders.readyDate as readyDate, ' +
+    'DATE_FORMAT(orders.readyDate, \'%d.%m.%Y %T\') as readyDate, ' +
     'orders.sent as sent, ' +
-    'orders.sentDate as sentDate, ' +
+    'DATE_FORMAT(orders.sentDate, \'%d.%m.%Y %T\') as sentDate, ' +
     'orders.delivered as delivered, ' +
-    'orders.deliveredDate as deliveredDate ' +
+    'DATE_FORMAT(orders.deliveredDate, \'%d.%m.%Y %T\') as deliveredDate ' +
     'FROM orders ' +
     'WHERE id = ' + mySql.escape(id);
     mySql.query(sql, function (err, result) {

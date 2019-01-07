@@ -22,7 +22,10 @@ module.exports.getRecordById = function getRecordById(req, res) {
             toy = result;
             if (toyInOrder)
                 toy.quantity = toyInOrder.quantity;
-            res.render('toy.handlebars', {toy: toy, photos: photos});
+            if (toy)
+                res.render('toy.handlebars', {toy: toy, photos: photos});
+            else 
+                res.redirect(303, '/404');
         });
     })
 }
