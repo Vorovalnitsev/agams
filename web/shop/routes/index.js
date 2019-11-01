@@ -11,6 +11,7 @@ const controllerToys = require('../controllers/toys');
 const controllerContacts = require('../controllers/contacts');
 const controller404 = require('../controllers/404');
 const controller500 = require('../controllers/500');
+const controllerYandex = require('../controllers/yandex')
 module.exports = function (web) {
     //главная страница
     web.get('/', controllerIndex.index);
@@ -21,6 +22,10 @@ module.exports = function (web) {
 
     //Контакты
     web.get('/contacts', controllerContacts.index);
+
+    //Яндекс-подтверждение аккаунта
+
+    web.get('/yandex_ee499d938446415b.html', controllerYandex.index);
     
     /*
     Решено, это сайт визитка и мы не занимаемс розничной торговлей. 
